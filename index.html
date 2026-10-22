@@ -4,6 +4,747 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f2e9">
+  <meta name="description" content="Digitaltechnik verstehen, gezielt trainieren und dich in einer fairen Prüfungsrunde herausfordern.">
+  <title>Bit für Bit — Die Digitaltechnik-Challenge</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f2e9; --paper-deep: #e9e7dc; --ink: #171b1b;
+      --muted: #59615f; --line: #c8cbc1; --blue: #174ad1; --blue-dark: #1038a2;
+      --lime: #d8ff55; --white: #fffef9; --red: #a62f27; --green: #476e14;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --sans: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
+      --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      --shadow: 0 22px 54px rgb(20 29 30 / 13%), 0 3px 8px rgb(20 29 30 / 6%);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: radial-gradient(ellipse at 76% 11%, rgb(216 255 85 / 16%), transparent 30rem), var(--paper);
+      color: var(--ink); font: 16px/1.55 var(--sans);
+    }
+    a { color: inherit; }
+    button, select, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    .skip-link { position: absolute; z-index: 20; top: .75rem; left: .75rem; padding: .65rem 1rem; background: var(--ink); color: white; transform: translateY(-160%); }
+    .skip-link:focus { transform: translateY(0); }
+    .wrap { width: min(1160px, calc(100% - 56px)); margin-inline: auto; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 78px; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: .75rem; text-decoration: none; font-size: .91rem; font-weight: 800; letter-spacing: -.035em; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; background: var(--blue); color: white; font: 700 .82rem var(--mono); box-shadow: 4px 4px 0 var(--lime); }
+    .nav { display: flex; align-items: center; gap: 2rem; }
+    .nav a { text-decoration: none; font-size: .84rem; font-weight: 650; color: #39413f; }
+    .nav a:hover { color: var(--blue); }
+    .nav .nav-cta { padding: .62rem .9rem; color: white; background: var(--ink); }
+    .nav .nav-cta:hover { background: var(--blue); color: white; }
+    .hero { display: grid; grid-template-columns: minmax(0, .88fr) minmax(460px, 1.12fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3.7rem, 7vw, 6rem) 4.5rem; }
+    .eyebrow { display: flex; align-items: center; gap: .6rem; margin: 0 0 1.05rem; color: var(--blue); text-transform: uppercase; letter-spacing: .14em; font: 700 .7rem var(--mono); }
+    .eyebrow::before { content: ""; width: 25px; height: 2px; background: currentColor; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 590px; margin-bottom: 1.15rem; font: 500 clamp(3.3rem, 6vw, 5.7rem)/.94 var(--serif); letter-spacing: -.067em; }
+    h1 em { color: var(--blue); font-weight: 500; }
+    .hero-copy { max-width: 480px; margin-bottom: 1.55rem; color: #424a48; font-size: clamp(1rem, 1.4vw, 1.1rem); }
+    .hero-note { display: flex; align-items: center; gap: .65rem; margin: 2rem 0 0; color: var(--muted); font-size: .75rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #6d9a27; }
+    .hero-links { display: flex; flex-wrap: wrap; gap: .8rem 1.25rem; align-items: center; }
+    .button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .7rem; padding: .72rem 1rem; border: 1px solid var(--blue); background: var(--blue); color: white; text-decoration: none; font-size: .86rem; font-weight: 750; cursor: pointer; transition: background .18s ease, transform .18s ease; }
+    .button:hover:not(:disabled) { background: var(--blue-dark); transform: translateY(-2px); }
+    .button:disabled { opacity: .55; cursor: not-allowed; }
+    .text-link { text-decoration-thickness: 1px; text-underline-offset: 4px; font-size: .85rem; font-weight: 700; }
+    .console-wrap { position: relative; isolation: isolate; padding: 1.15rem; background: #20282b; box-shadow: var(--shadow); }
+    .console-wrap::before { content: ""; position: absolute; z-index: -1; inset: -14px 14px 14px -14px; border: 1px solid rgb(23 74 209 / 33%); }
+    .console-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .2rem .2rem .95rem; color: #d8ded9; font: 700 .65rem var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .console-top strong { color: var(--lime); font-weight: 700; }
+    .console-panel { min-height: 460px; padding: clamp(1.1rem, 2.7vw, 1.8rem); background: var(--white); }
+    .panel-kicker { margin: 0 0 .35rem; color: var(--blue); font: 700 .68rem var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .panel-title { margin: 0 0 .45rem; font: 500 clamp(1.7rem, 3vw, 2.2rem)/1.05 var(--serif); letter-spacing: -.045em; }
+    .panel-intro { max-width: 620px; margin: 0 0 1.2rem; color: var(--muted); font-size: .83rem; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+    .field-label { display: grid; gap: .35rem; color: #414946; font-size: .72rem; font-weight: 750; }
+    select, .numeric-input { width: 100%; min-height: 43px; padding: .55rem .65rem; border: 1px solid #aeb5ad; border-radius: 0; background: #fff; color: var(--ink); }
+    .mode-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; margin: 1rem 0; }
+    .mode-option { position: relative; }
+    .mode-option input { position: absolute; opacity: 0; inset: 0; }
+    .mode-option span { display: grid; min-height: 65px; align-content: center; gap: .12rem; padding: .55rem; border: 1px solid var(--line); cursor: pointer; }
+    .mode-option strong { font-size: .75rem; }
+    .mode-option small { color: var(--muted); font-size: .63rem; line-height: 1.3; }
+    .mode-option input:checked + span { border-color: var(--blue); background: #edf1ff; box-shadow: inset 0 -3px var(--blue); }
+    .mode-option input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .start-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--line); padding-top: .9rem; }
+    .start-row p { max-width: 260px; margin: 0; color: var(--muted); font-size: .69rem; }
+    .start-button { min-height: 44px; padding: .65rem .85rem; }
+    .topics-line { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+    .topic-tag { border: 1px solid #d8dad2; padding: .28rem .48rem; color: #444c48; font: 600 .61rem var(--mono); }
+    .play-head { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding-bottom: .7rem; border-bottom: 1px solid var(--line); }
+    .play-meta { color: var(--muted); font: 700 .66rem var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .play-score { margin-left: auto; color: var(--blue); font: 700 .68rem var(--mono); white-space: nowrap; }
+    .timer { padding: .35rem .55rem; background: var(--ink); color: white; font: 700 .85rem var(--mono); font-variant-numeric: tabular-nums; }
+    .timer.urgent { background: #a62f27; }
+    .progress-line { height: 4px; margin-top: .7rem; background: #e0e2da; }
+    .progress-fill { display: block; width: 0; height: 100%; background: var(--blue); transition: width .25s ease; }
+    .question-index { margin: 1rem 0 .35rem; color: var(--blue); font: 700 .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .question-title { margin: 0 0 .85rem; font: 500 clamp(1.35rem, 2.7vw, 1.8rem)/1.18 var(--serif); letter-spacing: -.03em; }
+    .question-note { margin: -.3rem 0 .7rem; color: var(--muted); font-size: .78rem; }
+    .truth-table { width: auto; margin: .5rem 0 .85rem; border-collapse: collapse; font: 700 .78rem var(--mono); }
+    .truth-table th, .truth-table td { min-width: 36px; padding: .27rem .55rem; border: 1px solid #c8cbc1; text-align: center; }
+    .truth-table th { background: #f0efe8; }
+    .code-sample { overflow-x: auto; margin: .45rem 0 .8rem; padding: .75rem; background: #20282b; color: #f6f5ec; font: .76rem/1.5 var(--mono); white-space: pre; }
+    .answer-options { display: grid; gap: .42rem; }
+    .answer-option { display: flex; align-items: flex-start; gap: .65rem; width: 100%; min-height: 41px; padding: .48rem .65rem; border: 1px solid #dcdfd7; background: transparent; color: var(--ink); text-align: left; font: 600 .79rem/1.4 var(--sans); cursor: pointer; }
+    .answer-option:hover { border-color: var(--blue); background: #f4f6ff; }
+    .answer-option input { flex: 0 0 auto; margin: .18rem 0 0; accent-color: var(--blue); }
+    .answer-option:has(input:checked) { border-color: var(--blue); background: #edf1ff; }
+    .answer-option.is-correct { border-color: #628e1e; background: #f0f7df; }
+    .answer-option.is-wrong { border-color: #b94238; background: #fbefeb; }
+    .numeric-wrap { display: flex; align-items: center; gap: .6rem; max-width: 320px; }
+    .numeric-input { max-width: 220px; }
+    .unit { color: var(--muted); font: 700 .8rem var(--mono); }
+    .question-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin-top: .8rem; }
+    .action-button { min-height: 40px; padding: .55rem .78rem; border: 1px solid var(--ink); background: var(--ink); color: white; font-size: .76rem; font-weight: 750; cursor: pointer; }
+    .action-button:hover:not(:disabled) { background: var(--blue); border-color: var(--blue); }
+    .action-button.secondary { background: transparent; color: var(--ink); }
+    .action-button.secondary:hover { background: var(--paper-deep); }
+    .action-button:disabled { background: #d9dcd4; border-color: #d9dcd4; color: #737a74; cursor: not-allowed; }
+    .answer-feedback { min-height: 1.4rem; margin: .65rem 0 0; color: var(--muted); font-size: .75rem; }
+    .answer-feedback.good { color: var(--green); font-weight: 700; }
+    .answer-feedback.bad { color: var(--red); font-weight: 700; }
+    .exam-warning { margin: .6rem 0 0; color: #71520d; font-size: .68rem; }
+    .confirm-box { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin-top: .7rem; padding: .7rem; border: 1px solid #b94238; background: #fbefeb; font-size: .74rem; }
+    .result-score { display: block; margin: .75rem 0 .4rem; color: var(--blue); font: 500 clamp(3.8rem, 8vw, 5rem)/.9 var(--serif); letter-spacing: -.08em; }
+    .result-copy { color: var(--muted); font-size: .84rem; }
+    .review-list { display: grid; gap: .45rem; max-height: 225px; overflow-y: auto; margin: .9rem 0; padding: 0; list-style: none; }
+    .review-item { padding: .55rem .65rem; border-left: 3px solid #b94238; background: #fbefeb; font-size: .72rem; }
+    .review-item.correct { border-color: #628e1e; background: #f0f7df; }
+    .review-item strong { display: block; margin-bottom: .15rem; }
+    .section-rule { border-top: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding: 3.8rem 0 1.8rem; }
+    .section-heading .eyebrow { margin-bottom: .7rem; }
+    .section-heading h2 { max-width: 560px; margin-bottom: 0; font: 500 clamp(2.35rem, 4vw, 3.75rem)/1 var(--serif); letter-spacing: -.055em; }
+    .section-heading > p { max-width: 380px; margin: 0 0 .2rem; color: var(--muted); font-size: .9rem; }
+    .topic-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .topic { min-height: 155px; padding: 1.1rem 1.1rem 1.2rem 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .topic:nth-child(4n) { border-right: 0; }
+    .topic:nth-last-child(-n+3) { border-bottom: 0; }
+    .topic:not(:nth-child(4n+1)) { padding-left: 1.1rem; }
+    .topic-no { color: var(--blue); font: 700 .65rem var(--mono); }
+    .topic h3 { margin: 1rem 0 .3rem; font: 500 1.12rem/1.1 var(--serif); }
+    .topic p { margin: 0; color: var(--muted); font-size: .74rem; }
+    .materials { padding: 4.5rem 0 5rem; }
+    .materials-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end; margin-bottom: 2rem; }
+    .materials-intro .eyebrow { margin-bottom: .7rem; }
+    .materials-intro h2 { margin: 0; font: 500 clamp(2.5rem, 5vw, 4rem)/.98 var(--serif); letter-spacing: -.055em; }
+    .materials-intro > p { max-width: 420px; margin: 0 0 .15rem auto; color: var(--muted); font-size: .9rem; }
+    .materials-list { border-top: 1px solid var(--ink); }
+    .material-group { display: grid; grid-template-columns: 180px 1fr; padding: 1.4rem 0; border-bottom: 1px solid var(--line); }
+    .material-group h3 { margin: .25rem 0 0; color: var(--muted); font: 700 .69rem var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .material-links { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem 2rem; }
+    .material-link { display: flex; align-items: center; justify-content: space-between; gap: .7rem; min-height: 40px; padding-bottom: .45rem; border-bottom: 1px solid #d8dad2; text-decoration: none; font-size: .87rem; font-weight: 650; }
+    .material-link:hover { color: var(--blue); border-color: var(--blue); }
+    .pdf-type { color: var(--muted); font: 600 .63rem var(--mono); }
+    .footer { padding: 1.7rem 0 2.2rem; background: var(--ink); color: #e7e9df; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+    .footer-brand { margin: 0; font-weight: 800; letter-spacing: -.03em; }
+    .footer-note { max-width: 600px; margin: 0; color: #bfc5bb; font-size: .75rem; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 2.2rem; }
+      .hero-copy { max-width: 640px; }
+      .console-wrap { max-width: 740px; width: 100%; margin-inline: auto; }
+      .topic-grid { grid-template-columns: repeat(2, 1fr); }
+      .topic:nth-child(2n) { border-right: 0; }
+      .topic:nth-child(4n) { border-right: 0; }
+      .topic:nth-child(4n+1) { padding-left: 0; }
+      .topic:not(:nth-child(4n+1)) { padding-left: 1.1rem; }
+      .topic:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
+      .topic:nth-last-child(-n+1) { border-bottom: 0; }
+    }
+    @media (max-width: 600px) {
+      .wrap { width: min(100% - 36px, 520px); }
+      .topbar { min-height: 68px; }
+      .brand { font-size: .78rem; }
+      .nav { gap: .55rem; }
+      .nav a { font-size: .71rem; }
+      .nav a:first-child { display: none; }
+      .nav .nav-cta { padding: .5rem .6rem; }
+      .hero { padding-block: 3rem 3.3rem; }
+      h1 { font-size: clamp(3.2rem, 15vw, 4.8rem); }
+      .console-wrap { padding: .7rem; }
+      .console-wrap::before { inset: -8px 8px 8px -8px; }
+      .console-panel { min-height: 0; padding: 1rem; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .mode-list { gap: .32rem; }
+      .mode-option span { min-height: 70px; padding: .42rem; }
+      .mode-option strong { font-size: .68rem; }
+      .mode-option small { font-size: .58rem; }
+      .start-row { align-items: flex-start; flex-direction: column; }
+      .start-row p { max-width: none; }
+      .question-title { font-size: 1.42rem; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 1rem; padding-top: 3rem; }
+      .topic-grid { grid-template-columns: 1fr; }
+      .topic, .topic:nth-child(2n), .topic:nth-child(4n) { min-height: auto; padding: 1rem 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .topic:nth-last-child(-n+1), .topic:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
+      .topic:last-child { border-bottom: 0; }
+      .topic h3 { margin: .55rem 0 .25rem; }
+      .materials { padding: 3.5rem 0 3.8rem; }
+      .materials-intro { grid-template-columns: 1fr; gap: 1rem; }
+      .materials-intro > p { margin: 0; }
+      .material-group { grid-template-columns: 1fr; gap: .7rem; }
+      .material-links { grid-template-columns: 1fr; gap: .25rem; }
+      .footer-inner { flex-direction: column; gap: .8rem; }
+    }
+    @media (max-width: 380px) {
+      .wrap { width: calc(100% - 28px); }
+      .mode-list { grid-template-columns: 1fr; }
+      .mode-option span { min-height: 54px; }
+      .console-top { font-size: .57rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <header class="wrap topbar">
+    <a class="brand" href="#" aria-label="Bit für Bit – Startseite"><span class="brand-mark" aria-hidden="true">01</span><span>BIT FÜR BIT <span aria-hidden="true">/</span> DIGITALTECHNIK</span></a>
+    <nav class="nav" aria-label="Hauptnavigation"><a href="#themen">Themen</a><a href="#material">Material</a><a class="nav-cta" href="#challenge">Challenge starten <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main id="main">
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Wissen prüfen. Zusammenhänge knacken.</p>
+        <h1 id="hero-title">Denk in <em>0 und 1.</em></h1>
+        <p class="hero-copy">Sieben Themenfelder, verschiedene Antwortformate und eine faire Prüfungsrunde mit Uhr. Trainiere in deinem Tempo oder teste, was unter Zeitdruck schon sitzt.</p>
+        <div class="hero-links"><a class="button" href="#challenge">Challenge konfigurieren <span aria-hidden="true">→</span></a><a class="text-link" href="#themen">Themen entdecken</a></div>
+        <p class="hero-note"><span class="status-dot" aria-hidden="true"></span> 42 eigene Fragen <span aria-hidden="true">·</span> Kein Konto, kein Tracking</p>
+      </div>
+      <section class="console-wrap" id="challenge" aria-label="Digitaltechnik-Challenge">
+        <div class="console-top"><span>BIT FÜR BIT <span aria-hidden="true">/</span> CHALLENGE CONSOLE</span><strong>42 FRAGEN · 07 FELDER</strong></div>
+        <div class="console-panel">
+          <div id="setup">
+            <p class="panel-kicker">Dein nächster Schritt</p>
+            <h2 class="panel-title">Eine Runde, dein Fokus.</h2>
+            <p class="panel-intro">Wähle Themen und Niveau. Im Training bekommst du direkt Rückmeldung; die Prüfungsrunde bleibt bis zum Schluss still.</p>
+            <div class="settings-grid">
+              <label class="field-label" for="category-select">Themenfeld
+                <select id="category-select"><option value="all">Alle sieben Themen</option></select>
+              </label>
+              <label class="field-label" for="difficulty-select">Schwierigkeit
+                <select id="difficulty-select"><option value="all">Gemischt</option><option value="easy">Grundlagen</option><option value="medium">Aufbau</option><option value="hard">Vertiefung</option></select>
+              </label>
+            </div>
+            <fieldset class="mode-list" aria-label="Rundenmodus" style="border:0;padding:0">
+              <label class="mode-option"><input type="radio" name="mode" value="practice" checked><span><strong>Trainieren</strong><small>Bis zu 10 Fragen · Erklärungen sofort</small></span></label>
+              <label class="mode-option"><input type="radio" name="mode" value="exam"><span><strong>Prüfungsrunde</strong><small>10 Fragen · 10 Minuten</small></span></label>
+              <label class="mode-option"><input type="radio" name="mode" value="daily"><span><strong>Frage des Tages</strong><small>Eine neue Perspektive</small></span></label>
+            </fieldset>
+            <div class="start-row"><p id="setup-note">Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.</p><button class="button start-button" id="start-button" type="button">Runde starten <span aria-hidden="true">→</span></button></div>
+            <div class="topics-line" aria-label="Enthaltene Antwortformate"><span class="topic-tag">AUSWAHL</span><span class="topic-tag">MEHRFACH</span><span class="topic-tag">ZAHLENWERT</span><span class="topic-tag">WAHRHEITSTABELLE</span><span class="topic-tag">FEHLERSUCHE</span></div>
+          </div>
+          <div id="play" hidden>
+            <div class="play-head"><span class="play-meta" id="round-label">TRAINING · FRAGE 01 / 10</span><span class="play-score" id="live-score">Punktestand 0</span><span class="timer" id="timer" aria-label="Verstrichene Zeit">00:00</span></div>
+            <div class="progress-line" role="progressbar" id="round-progress" aria-label="Rundenfortschritt" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><span class="progress-fill" id="progress-fill"></span></div>
+            <p class="question-index" id="question-meta"></p>
+            <h2 class="question-title" id="question-title" tabindex="-1"></h2>
+            <p class="question-note" id="question-note"></p>
+            <div id="question-extra"></div>
+            <div id="answer-area"></div>
+            <div class="question-actions"><button class="action-button" id="submit-answer" type="button">Antwort prüfen</button><button class="action-button secondary" id="next-question" type="button" disabled>Weiter →</button><button class="action-button secondary" id="end-round" type="button" hidden>Runde beenden</button></div>
+            <p class="answer-feedback" id="answer-feedback" aria-live="polite"></p>
+            <div class="exam-warning" id="exam-warning" hidden>Prüfungsrunde ohne Pause. Beenden oder Ablauf der Uhr schließt die Runde ab.</div>
+            <div class="confirm-box" id="confirm-end" hidden><span>Runde jetzt abschließen? Nicht beantwortete Fragen zählen als falsch.</span><button class="action-button" id="confirm-finish" type="button">Jetzt abgeben</button><button class="action-button secondary" id="cancel-finish" type="button">Zurück</button></div>
+          </div>
+          <div id="results" hidden tabindex="-1" aria-labelledby="result-title"></div>
+        </div>
+      </section>
+    </section>
+    <section class="wrap section-rule" id="themen" aria-labelledby="topics-title">
+      <div class="section-heading"><div><p class="eyebrow">Der Baukasten dahinter</p><h2 id="topics-title">Sieben Wege,<br>digital zu denken.</h2></div><p>Von Zahlencodes über Zustandsautomaten bis zu Wandlern: Wähle im Challenge-Menü ein Themenfeld oder mische alle Kapitel.</p></div>
+      <div class="topic-grid">
+        <article class="topic"><span class="topic-no">01 / ZAHLEN</span><h3>Digitale Codierung &amp; Zahlensysteme</h3><p>Binär, hexadezimal, Gray-Code und vorzeichenbehaftete Zahlen.</p></article>
+        <article class="topic"><span class="topic-no">02 / LOGIK</span><h3>Kombinatorik &amp; Logik</h3><p>Boolesche Funktionen, Gatter, Tabellen und Vereinfachungen.</p></article>
+        <article class="topic"><span class="topic-no">03 / ZUSTÄNDE</span><h3>Sequenzielle Schaltungen</h3><p>Flipflops, Taktflanken, Zähler und endliche Zustandsfolgen.</p></article>
+        <article class="topic"><span class="topic-no">04 / BESCHREIBEN</span><h3>VHDL</h3><p>Datentypen, Prozesse, Signale und syntaktische Fehlersuche.</p></article>
+        <article class="topic"><span class="topic-no">05 / REALISIEREN</span><h3>Programmierbare Logik</h3><p>LUTs, PLDs, Konfiguration und typische Hardwarefallen.</p></article>
+        <article class="topic"><span class="topic-no">06 / SPEICHERN</span><h3>Speicher &amp; Halbleiter</h3><p>Kapazität, RAM-Typen und Eigenschaften digitaler Bausteine.</p></article>
+        <article class="topic"><span class="topic-no">07 / MESSEN</span><h3>A/D- und D/A-Umsetzung</h3><p>Auflösung, Abtastung, Quantisierung und digitale Ausgabe.</p></article>
+      </div>
+    </section>
+    <section class="wrap materials" id="material" aria-labelledby="materials-title">
+      <div class="materials-intro"><div><p class="eyebrow">Zum Vertiefen</p><h2 id="materials-title">Dein Lernmaterial.</h2></div><p>Die Kursunterlagen zum Nachlesen und Üben — übersichtlich nach Themen sortiert. Öffne ein PDF, wenn du tiefer einsteigen möchtest.</p></div>
+      <div class="materials-list">
+        <section class="material-group" aria-labelledby="group-basics"><h3 id="group-basics">DIG 1 · Grundlagen</h3><div class="material-links">
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K01_Einfuehrung.pdf"><span>Einführung</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K02_Digitale_Codierung.pdf"><span>Digitale Codierung</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K03_Einfuehrung_VHDL.pdf"><span>Einführung in VHDL</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K04_Kombinatorische_Schaltungen.pdf"><span>Kombinatorische Schaltungen</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K05_Sequenzielle_Schaltungen.pdf"><span>Sequenzielle Schaltungen</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K06_Schaltungsstrukturen.pdf"><span>Schaltungsstrukturen</span><span class="pdf-type">PDF ↗</span></a>
+        </div></section>
+        <section class="material-group" aria-labelledby="group-advanced"><h3 id="group-advanced">DIG 2 · Vertiefung</h3><div class="material-links">
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K06_Schaltungsstrukturen.pdf"><span>Schaltungsstrukturen</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K07_Realisierung_digitaler_Systeme.pdf"><span>Realisierung digitaler Systeme</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K08_VHDL-Vertiefung.pdf"><span>VHDL-Vertiefung</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K09_Programmierbare_Logik.pdf"><span>Programmierbare Logik</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K10_Halbleitertechnik.pdf"><span>Halbleitertechnik</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K11_Speicher.pdf"><span>Speicher</span><span class="pdf-type">PDF ↗</span></a>
+          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K12_AD_DA_Umsetzer.pdf"><span>A/D- und D/A-Umsetzer</span><span class="pdf-type">PDF ↗</span></a>
+        </div></section>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><p class="footer-brand">BIT FÜR BIT <span aria-hidden="true">/</span> 01 → 10</p><p class="footer-note">Diese Seite ist eine Lernhilfe und ersetzt keine Kursunterlagen. Das verlinkte Quellenmaterial bleibt Eigentum der jeweiligen Rechteinhaber:innen. Alle Challenge-Fragen wurden eigenständig auf Grundlage allgemeinen Digitaltechnik-Wissens formuliert; sie reproduzieren keine Lehrbuchinhalte.</p></div></footer>
+  <script>
+    (() => {
+      const categories = [
+        "Digitale Codierung/Zahlensysteme", "Kombinatorik/Logik", "Sequenzielle Schaltungen",
+        "VHDL", "Programmierbare Logik", "Speicher/Halbleiter", "A/D-D/A-Umsetzung"
+      ];
+      const S = (category, difficulty, prompt, choices, answer, explain, extra = {}) => ({ category, difficulty, type: "single", prompt, choices, answer, explain, ...extra });
+      const M = (category, difficulty, prompt, choices, answer, explain, extra = {}) => ({ category, difficulty, type: "multi", prompt, choices, answer, explain, ...extra });
+      const N = (category, difficulty, prompt, answer, tolerance, unit, explain) => ({ category, difficulty, type: "numeric", prompt, answer, tolerance, unit, explain });
+      const T = (category, difficulty, prompt, rows, choices, answer, explain) => ({ category, difficulty, type: "truth", prompt, rows, choices, answer, explain });
+      const D = (category, difficulty, prompt, snippet, choices, answer, explain) => ({ category, difficulty, type: "debug", prompt, snippet, choices, answer, explain });
+      const questions = [
+        S(categories[0], "easy", "Wie lautet 45₁₀ als Binärzahl?", ["101101₂", "101011₂", "110101₂", "100101₂"], 0, "45 = 32 + 8 + 4 + 1. An den Stellen 5, 3, 2 und 0 steht daher jeweils eine 1: 101101₂."),
+        N(categories[0], "easy", "Welchen Dezimalwert hat 3A₁₆?", 58, 0, "", "3A₁₆ = 3 · 16 + 10 = 58. Das A im Hexadezimalsystem steht für den Wert zehn."),
+        M(categories[0], "medium", "Welche Aussagen über die 8-Bit-Zweierkomplementdarstellung von −6 stimmen?", ["Das höchstwertige Bit ist 1.", "Man erhält sie durch Invertieren von 00000110 und Addieren von 1.", "Der darstellbare Wertebereich ist −128 bis +127.", "Als vorzeichenlose Zahl gelesen ist das Bitmuster 6."], [0, 1, 2], "Invertieren und Eins addieren ergibt 11111010. Bei 8 Bit reicht der Zweierkomplementbereich von −128 bis +127; vorzeichenlos ist das Muster 250."),
+        T(categories[0], "medium", "Ein Binärwert wird in Gray-Code umgewandelt: Das erste Bit bleibt gleich, danach wird jeweils mit dem vorherigen Binärbit XOR-verknüpft. Welcher Gray-Code gehört zu 1011₂?", [["Binärwert", "1", "0", "1", "1"], ["Gray-Bit", "1", "1", "1", "0"]], ["1110", "1011", "1101", "1001"], 0, "Das erste Gray-Bit ist 1. Danach ergeben 1⊕0=1, 0⊕1=1 und 1⊕1=0 den Gray-Code 1110."),
+        D(categories[0], "hard", "Ein System interpretiert jede vierstellige BCD-Ziffer als Dezimalziffer. Was ist bei der Eingabe 1010₂ der Fehler?", "BCD-Eingabe: 1010", ["Sie ist als BCD ungültig, denn eine Dezimalziffer reicht nur von 0000 bis 1001.", "Sie ist die gültige BCD-Ziffer 10.", "BCD erlaubt nur gerade Ziffern.", "Der Wert muss zuerst als Gray-Code gelesen werden."], 0, "Eine BCD-Ziffer codiert genau eine Dezimalziffer von 0 bis 9. Die vier Bitmuster 1010 bis 1111 sind dafür ungültig."),
+        S(categories[0], "hard", "Welche Dezimalzahl stellt 100111₂ als vorzeichenlose Binärzahl dar?", ["37", "39", "41", "49"], 1, "100111₂ = 32 + 4 + 2 + 1 = 39. Die Zahl ist hier ausdrücklich vorzeichenlos zu lesen."),
+
+        T(categories[1], "easy", "Für y = (a UND b) ODER c: Welchen Ausgang liefert die Zeile a=1, b=0, c=1?", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"], ["c", "0", "0", "1", "1"]], ["0", "1"], 1, "a UND b ist 1 UND 0 = 0. Mit c=1 wird daraus 0 ODER 1 = 1."),
+        M(categories[1], "medium", "Welche Ausdrücke sind nach den De-Morgan-Regeln äquivalent zu NICHT(A ODER B)?", ["(NICHT A) UND (NICHT B)", "NICHT(A) ODER NICHT(B)", "NICHT(A UND B)", "(NICHT A) UND B"], [0], "Die Negation einer ODER-Verknüpfung verteilt sich auf beide Eingänge und kehrt ODER in UND um: ¬(A∨B)=¬A∧¬B."),
+        S(categories[1], "easy", "Welchen Wert liefert A XOR B für A=1 und B=1?", ["0", "1", "Der Ausgang ist undefiniert.", "2"], 0, "XOR ist genau dann 1, wenn die Eingänge verschieden sind. Bei 1 und 1 sind sie gleich, also ist der Ausgang 0."),
+        D(categories[1], "hard", "In einem kombinatorischen VHDL-Prozess wird y nicht in jedem Zweig zugewiesen. Welche unbeabsichtigte Hardware kann dadurch entstehen?", "process(a, b, enable)\nbegin\n  if enable = '1' then\n    y <= a and b;\n  end if;\nend process;", ["Ein transparentes Latch, das den alten Wert hält, wenn enable='0' ist.", "Ein flankengesteuertes D-Flipflop.", "Ein zusätzlicher Inverter am Takteingang.", "Ein rein kombinatorischer Ausgang ohne gespeicherten Zustand."], 0, "Wird y bei enable='0' nicht zugewiesen, muss sein alter Wert erhalten bleiben. In einem solchen Prozess führt das typischerweise zur Latch-Inferenz."),
+        N(categories[1], "easy", "Wie viele Ausgänge hat ein idealer 3-zu-8-Decoder?", 8, 0, "Ausgänge", "Drei Eingangsbits codieren 2³=8 verschiedene Kombinationen; für jede Kombination ist ein eigener Decoder-Ausgang vorgesehen."),
+        S(categories[1], "medium", "Welche Funktion beschreibt ein 2:1-Multiplexer mit Selekteingang s korrekt?", ["y = (¬s UND d₀) ODER (s UND d₁)", "y = d₀ UND d₁, unabhängig von s", "y = s XOR d₀ XOR d₁", "y = (s ODER d₀) UND d₁"], 0, "Für s=0 wählt der Multiplexer d₀, für s=1 d₁. Die Summe der beiden jeweils aktivierten Terme beschreibt genau dieses Verhalten."),
+
+        S(categories[2], "easy", "Wann übernimmt ein positiv flankengesteuertes D-Flipflop den Eingang D?", ["Bei der steigenden Taktflanke.", "Während der gesamten High-Phase des Takts.", "Nur bei einer fallenden Taktflanke.", "Sobald D seinen Wert ändert."], 0, "Ein positiv flankengesteuertes D-Flipflop tastet D an der steigenden Taktflanke ab und hält den übernommenen Wert danach."),
+        T(categories[2], "easy", "Ein 2-Bit-Aufwärtszähler startet bei 00 und erhöht sich bei jedem Takt modulo 4. Welcher Zustand folgt auf drei Taktflanken?", [["Taktzahl", "0", "1", "2", "3"], ["Zustand", "00", "01", "10", "11"]], ["00", "01", "10", "11"], 3, "Die Zustandsfolge lautet 00 → 01 → 10 → 11. Nach drei Flanken steht der Zähler bei 11."),
+        M(categories[2], "medium", "Welche Aussagen zu einem D-Flipflop stimmen?", ["Es speichert einen Zustand über die Zeit.", "Sein Ausgang folgt bei einem flankengesteuerten Typ dauernd dem Eingang D.", "Sein Zustand kann von einer Taktflanke abhängen.", "Es benötigt grundsätzlich zwei Takteingänge."], [0, 2], "Ein Flipflop ist ein Speicherelement und übernimmt seinen Eingang bei der spezifizierten Taktflanke. Es ist kein transparentes Pegellatch und braucht nicht grundsätzlich zwei Takteingänge."),
+        D(categories[2], "hard", "Ein synchroner Zähler besitzt zwei Zustandsbits und soll modulo 4 aufwärtszählen. Was ist der Fehler in dieser Zustandsfolge?", "00 → 01 → 10 → 00 → 00 …", ["Der Zustand 11 fehlt; modulo 4 muss die Folge 00, 01, 10, 11, 00 durchlaufen.", "Ein 2-Bit-Zähler kann den Zustand 10 nicht erreichen.", "Modulo 4 muss der Zähler nach 10 auf 01 springen.", "Ein synchroner Zähler darf nicht zyklisch sein."], 0, "Zwei Zustandsbits bieten vier Werte. Der Aufwärtszähler muss alle vier Codes 00, 01, 10 und 11 durchlaufen, bevor er auf 00 zurückspringt."),
+        N(categories[2], "easy", "Wie viele verschiedene Zustände hat ein idealer 4-Bit-Binärzähler?", 16, 0, "Zustände", "Mit vier unabhängigen Bits gibt es 2⁴ = 16 mögliche Zustände."),
+        S(categories[2], "medium", "Was bewirkt ein asynchroner Reset eines Flipflops typischerweise?", ["Er setzt den Zustand unabhängig von der nächsten Taktflanke zurück.", "Er wirkt ausschließlich an einer steigenden Taktflanke.", "Er invertiert den gespeicherten Zustand bei jedem Takt.", "Er sperrt den Dateneingang dauerhaft."], 0, "Ein asynchroner Reset wirkt unabhängig vom Takt. Ein synchroner Reset würde dagegen nur an einer aktiven Taktflanke ausgewertet."),
+
+        S(categories[3], "easy", "Welche VHDL-Bibliothek wird üblicherweise für den Datentyp unsigned und standardisierte arithmetische Operationen verwendet?", ["ieee.numeric_std", "ieee.textio", "std.env", "work.bitstream"], 0, "numeric_std stellt die Typen unsigned und signed samt standardisierten numerischen Operationen bereit."),
+        D(categories[3], "medium", "Welche Schreibweise ist die korrekte VHDL-Syntax für zwei alternative Case-Werte?", "case sel is\n  when \"00\" or \"01\" =>\n    y <= '0';\n  when others =>\n    y <= '1';\nend case;", ["Die Alternativen in einer when-Auswahl werden mit | getrennt, nicht mit or.", "In case-Ausdrücken müssen alle Werte mit and verbunden werden.", "Der Fehler ist das Semikolon nach y <= '0'.", "VHDL erlaubt kein when others."], 0, "In einer case-Anweisung werden mehrere Alternativen einer when-Auswahl mit dem senkrechten Strich notiert, zum Beispiel when \"00\" | \"01\" =>."),
+        M(categories[3], "hard", "Ein kombinatorischer VHDL-Prozess liest a, b und sel. Welche Signale gehören in eine vollständige Sensitivitätsliste?", ["a", "b", "sel", "Nur clk, obwohl der Prozess keine Flanke prüft."], [0, 1, 2], "Ein kombinatorischer Prozess muss erneut ausgewertet werden, wenn sich irgendein gelesener Eingang ändert. Die Liste enthält hier a, b und sel."),
+        N(categories[3], "medium", "Wie viele Bits breit ist der VHDL-Vektor std_logic_vector(7 downto 0)?", 8, 0, "Bits", "Die Indizes 7, 6, 5, 4, 3, 2, 1 und 0 ergeben insgesamt acht Elemente."),
+        T(categories[3], "easy", "Der folgende kombinatorische VHDL-Code bildet y = a UND b. Welcher Ausgang entsteht für a=1 und b=0?", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"]], ["0", "1"], 1, "Der Code gibt nur dann 1 aus, wenn beide Signale 1 sind. Bei a=1 und b=0 ist y daher 0."),
+        S(categories[3], "hard", "Was bedeutet die VHDL-Zuweisung q <= d innerhalb eines getakteten Prozesses?", ["Sie plant eine Signalaktualisierung; die neue Signalwirkung wird nicht wie bei einer Variablen sofort an der nächsten Textstelle sichtbar.", "Sie aktualisiert q zwingend noch vor der nächsten Prozesszeile.", "Sie ist nur für Konstanten erlaubt.", "Sie erzeugt automatisch einen asynchronen Reset."], 0, "Eine Signalzuweisung plant ihre Aktualisierung für eine spätere Simulationsphase. Das unterscheidet sie von der unmittelbaren Aktualisierung einer Variablen mit :=."),
+
+        S(categories[4], "easy", "Wie viele verschiedene Eingangskombinationen kann eine LUT mit drei Adressbits abbilden?", ["6", "8", "3", "16"], 1, "Drei Adressbits wählen 2³ = 8 Speicherpositionen beziehungsweise Eingangskombinationen in der LUT."),
+        M(categories[4], "medium", "Welche Aussagen zu typischen programmierbaren Logikstrukturen treffen zu?", ["Bei einer PLA sind UND- und ODER-Ebene programmierbar.", "Bei einer klassischen PAL ist die UND-Ebene programmierbar und die ODER-Ebene fest verschaltet.", "Ein CPLD kann mehrere programmierbare Logikblöcke verbinden.", "Eine LUT kann grundsätzlich keine Boolesche Funktion realisieren."], [0, 1, 2], "Eine PLA bietet programmierbare UND- und ODER-Ebenen; bei der klassischen PAL ist typischerweise nur die UND-Ebene programmierbar. CPLDs verbinden mehrere programmierbare Blöcke."),
+        D(categories[4], "hard", "Ein FPGA-Ausgang soll anfangs genau einer Quelle folgen. Was ist bei dieser VHDL-Beschreibung problematisch?", "y <= a;\ny <= b;", ["Zwei gleichzeitig aktive Treiber können zu einem Konflikt beziehungsweise bei std_logic zu einem X führen.", "VHDL erlaubt grundsätzlich nur Signale mit dem Namen y.", "Die Zuweisungen werden zu einem UND-Gatter zusammengefasst.", "Die zweite Zeile ist ein gültiger Taktgenerator."], 0, "Beide nebenläufigen Zuweisungen treiben y gleichzeitig. Bei widersprüchlichen Werten kann die Auflösung des std_logic-Typs einen Konflikt als X anzeigen."),
+        T(categories[4], "medium", "Eine 2-Bit-LUT ist mit den Tabellenwerten y=0,1,1,0 für die Adressen 00,01,10,11 programmiert. Welcher Ausgang gehört zur Adresse 10?", [["Adresse", "00", "01", "10", "11"], ["LUT-Ausgang", "0", "1", "1", "0"]], ["0", "1"], 1, "In der angegebenen Belegung ist der dritte Wert der Adresse 10 zugeordnet. Dieser Tabellenwert ist 1."),
+        N(categories[4], "easy", "Wie viele Konfigurationsbits braucht eine einfache LUT mit 4 Adressbits und einem Ausgang?", 16, 0, "Bits", "Die LUT speichert einen Ausgangswert für jede der 2⁴ möglichen Adressen; dafür werden 16 Konfigurationsbits benötigt."),
+        S(categories[4], "hard", "Warum werden FPGA-Logikblöcke häufig über programmierbare Verbindungsstrukturen gekoppelt?", ["Damit die Funktion und Verbindung der Blöcke nach der Fertigung für verschiedene Schaltungen konfiguriert werden kann.", "Damit der FPGA keine Versorgungsspannung benötigt.", "Damit alle internen Signale analog übertragen werden.", "Damit eine Konfiguration dauerhaft ohne Speicher erhalten bleibt."], 0, "Programmierbare Verbindungen erlauben, Logikblöcke flexibel zu einer konkreten digitalen Schaltung zu verbinden. Versorgung und Konfigurationsspeicherung bleiben dennoch erforderlich."),
+
+        S(categories[5], "easy", "Welche Aussage beschreibt SRAM im Vergleich zu DRAM zutreffend?", ["SRAM benötigt keine periodische Speicherauffrischung, ist aber typischerweise weniger dicht.", "SRAM ist flüchtig und muss pro Zeile aufgefrischt werden.", "DRAM speichert Daten ohne Versorgungsspannung dauerhaft.", "SRAM besteht ausschließlich aus Kondensatoren."], 0, "SRAM hält den Zustand in einer bistabilen Schaltung und braucht keine Refresh-Zyklen. DRAM speichert Ladung und muss regelmäßig aufgefrischt werden; SRAM benötigt typischerweise mehr Fläche pro Bit."),
+        M(categories[5], "medium", "Welche Aussagen über DRAM treffen zu?", ["Der gespeicherte Ladungszustand muss regelmäßig aufgefrischt werden.", "DRAM ist üblicherweise flüchtig.", "Eine DRAM-Zelle kann typischerweise aus einem Transistor und einem Kondensator aufgebaut sein.", "DRAM benötigt grundsätzlich keine Energie zum Erhalt gespeicherter Daten."], [0, 1, 2], "DRAM speichert ein Bit typischerweise als Ladung in einem Kondensator, die regelmäßig aufgefrischt werden muss. Ohne Versorgung gehen die Daten verloren."),
+        N(categories[5], "easy", "Ein Speicher ist mit 4 Ki × 8 Bit organisiert. Wie groß ist seine Kapazität in Byte?", 4096, 0, "Byte", "4 Ki = 4 · 1024 Speicherwörter. Bei 8 Bit beziehungsweise einem Byte pro Wort sind das 4096 Byte."),
+        D(categories[5], "hard", "Ein Baustein hat 10 unabhängige Adressleitungen. Welche Aussage zur Zahl adressierbarer Speicherorte ist korrekt?", "A₉ … A₀", ["Es gibt 2¹⁰ = 1024 adressierbare Orte; die Datenbreite ist daraus allein nicht bekannt.", "Es gibt genau 10 Speicherorte und 10 Datenbits.", "Es gibt 20 Speicherorte.", "Jede Adressleitung adressiert genau einen Speicherort."], 0, "Zehn unabhängige Adressbits codieren 2¹⁰ verschiedene Adressen. Die Anzahl der Bits je Speicherwort wird durch die Datenleitungen festgelegt, nicht durch die Adressleitungen."),
+        T(categories[5], "medium", "Ein Speicher hat 12 Adressleitungen und ist wortweise organisiert. Wie viele verschiedene Adressen sind möglich?", [["Adressbits", "10", "11", "12"], ["Adressen", "1024", "2048", "4096"]], ["1024", "2048", "4096"], 2, "Mit 12 Adressbits gibt es 2¹² = 4096 verschiedene Adresskombinationen."),
+        S(categories[5], "medium", "Warum benötigt ein statischer CMOS-Inverter im stabilen logischen Zustand idealerweise nur sehr wenig statische Versorgungsleistung?", ["Im idealisierten Zustand leitet jeweils nur einer der beiden Transistorpfade; es gibt keinen dauerhaften direkten Pfad von Versorgung zu Masse.", "Beide MOS-Transistoren sind gleichzeitig vollständig leitend.", "CMOS-Bausteine funktionieren ohne Versorgungsspannung.", "Der Ausgang wird bei jedem Logikzustand von einem Kondensator getrennt."], 0, "In einem stabilen CMOS-Inverter ist idealerweise entweder der pMOS- oder der nMOS-Transistor leitend, nicht aber ein dauerhafter Kurzschlusspfad zwischen Versorgung und Masse. Umschaltvorgänge und reale Leckströme verbrauchen dennoch Leistung."),
+
+        N(categories[6], "easy", "Ein idealer unipolarer 8-Bit-ADC nutzt Vref=2,56 V und 256 gleich große Stufen. Wie groß ist eine Stufe?", 0.01, 0.00001, "V", "Die Stufenbreite beträgt Vref/2⁸ = 2,56 V/256 = 0,01 V."),
+        S(categories[6], "medium", "Welche minimale Abtastfrequenz fordert das Nyquist-Kriterium für ein bandbegrenztes Signal mit einer höchsten Frequenz von 4 kHz?", ["8 kHz", "4 kHz", "2 kHz", "16 kHz"], 0, "Die Abtastfrequenz muss mindestens doppelt so hoch wie die höchste Signalfrequenz sein: 2 · 4 kHz = 8 kHz. Praktisch sind Filter und Abstand zur Grenzfrequenz wichtig."),
+        M(categories[6], "medium", "Welche Maßnahmen oder Aussagen sind bei einer A/D-Wandlung sinnvoll?", ["Ein analoges Anti-Aliasing-Filter begrenzt Frequenzen vor dem Abtasten.", "Mehr Quantisierungsbits erlauben bei gleichem Bereich feinere Stufen.", "Die Abtastfrequenz kann beliebig unter der doppelten höchsten Signalfrequenz liegen, ohne Aliasing-Risiko.", "Quantisierung ordnet einem Messwert einen diskreten digitalen Code zu."], [0, 1, 3], "Ein Vorfilter begrenzt das Spektrum; mehr Bits erhöhen die Zahl der Quantisierungsstufen. Bei der Quantisierung wird der kontinuierliche Messwert einem diskreten Code zugeordnet."),
+        T(categories[6], "hard", "Ein idealer 3-Bit-ADC hat Vref=8 V, 8 gleich große Intervalle und rundet hier ausdrücklich durch Abrunden auf das Intervall ab. Welcher Code entsteht bei 5,2 V?", [["Eingangsbereich (V)", "0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8"], ["Code", "000", "001", "010", "011", "100", "101", "110", "111"]], ["100", "101", "110", "111"], 1, "Jede Stufe ist 8 V/8 = 1 V breit. 5,2 V liegt im Intervall 5–6 V, dessen Code bei der angegebenen Abrundungsregel 101 ist."),
+        D(categories[6], "hard", "Eine ideale 4-Bit-R-2R-DAC hat Bit 3 als höchstwertiges Bit. Was ist an dieser Gewichtung falsch?", "Beabsichtigt: b₃ hat Gewicht 1/16 Vref, b₀ hat Gewicht 1/2 Vref.", ["Die Gewichte sind vertauscht: b₃ ist das höchstwertige Bit und erhält idealerweise das größte Gewicht.", "R-2R-Netzwerke können keine digitalen Bits verarbeiten.", "Alle Bits einer idealen DAC müssen immer dasselbe Gewicht besitzen.", "Nur das niederwertigste Bit darf einen Widerstand schalten."], 0, "Beim üblichen binär gewichteten DAC bestimmt das höchstwertige Bit den größten Anteil am Ausgang. Für vier Bits sind die idealen Anteile proportional zu 1/2, 1/4, 1/8 und 1/16."),
+        S(categories[6], "easy", "Was bezeichnet die Quantisierungsstufe eines idealen gleichmäßigen Wandlers?", ["Den Abstand zwischen zwei benachbarten darstellbaren Amplitudenwerten.", "Die Zeit zwischen zwei aufeinanderfolgenden Abtastungen.", "Die maximale Bitrate des Ausgangs.", "Die Anzahl der analogen Eingänge."], 0, "Die Quantisierungsstufe ist der Abstand zwischen benachbarten diskreten Pegeln. Bei N Bits und unipolarem Bereich Vref ist die Schrittweite im idealen Modell typischerweise Vref/2ᴺ.")
+      ];
+
+      const difficultyNames = { easy: "Grundlagen", medium: "Aufbau", hard: "Vertiefung" };
+      const categoriesSelect = document.getElementById("category-select");
+      categories.forEach((category, index) => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = `${String(index + 1).padStart(2, "0")} · ${category}`;
+        categoriesSelect.append(option);
+      });
+
+      const setup = document.getElementById("setup");
+      const play = document.getElementById("play");
+      const results = document.getElementById("results");
+      const questionTitle = document.getElementById("question-title");
+      const questionMeta = document.getElementById("question-meta");
+      const questionNote = document.getElementById("question-note");
+      const questionExtra = document.getElementById("question-extra");
+      const answerArea = document.getElementById("answer-area");
+      const submitButton = document.getElementById("submit-answer");
+      const nextButton = document.getElementById("next-question");
+      const endButton = document.getElementById("end-round");
+      const feedback = document.getElementById("answer-feedback");
+      const progress = document.getElementById("round-progress");
+      const progressFill = document.getElementById("progress-fill");
+      const roundLabel = document.getElementById("round-label");
+      const liveScore = document.getElementById("live-score");
+      const timer = document.getElementById("timer");
+      const warning = document.getElementById("exam-warning");
+      const confirmEnd = document.getElementById("confirm-end");
+      let round = [];
+      let mode = "practice";
+      let index = 0;
+      let score = 0;
+      let locked = false;
+      let earned = new Set();
+      let selections = [];
+      let timerId = 0;
+      let deadline = 0;
+      let startedAt = 0;
+      let examRecords = [];
+
+      function validateQuestionBank() {
+        const supported = new Set(["single", "multi", "numeric", "truth", "debug"]);
+        if (questions.length < 40) throw new Error("Question bank is too small.");
+        questions.forEach((q, i) => {
+          if (!categories.includes(q.category) || !["easy", "medium", "hard"].includes(q.difficulty) || !supported.has(q.type) || !q.prompt || !q.explain) throw new Error(`Invalid question ${i}`);
+          if (["single", "truth", "debug", "multi"].includes(q.type) && (!Array.isArray(q.choices) || q.choices.length < 2)) throw new Error(`Invalid choices at ${i}`);
+          if (q.type === "multi" && (!Array.isArray(q.answer) || !q.answer.length || q.answer.some(a => !Number.isInteger(a) || a < 0 || a >= q.choices.length))) throw new Error(`Invalid multi answer at ${i}`);
+          if (["single", "truth", "debug"].includes(q.type) && (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= q.choices.length)) throw new Error(`Invalid choice answer at ${i}`);
+          if (q.type === "numeric" && (!Number.isFinite(q.answer) || !Number.isFinite(q.tolerance) || q.tolerance < 0)) throw new Error(`Invalid numeric answer at ${i}`);
+          if (q.type === "truth" && !Array.isArray(q.rows)) throw new Error(`Missing truth table at ${i}`);
+          if (q.type === "debug" && !q.snippet) throw new Error(`Missing code sample at ${i}`);
+        });
+      }
+
+      function shuffle(items) {
+        const copy = [...items];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function getDailyQuestion(pool) {
+        const today = new Date();
+        const dayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+        let hash = 0;
+        for (const char of dayKey) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+        return pool[hash % pool.length];
+      }
+
+      function startRound() {
+        const category = categoriesSelect.value;
+        const difficulty = document.getElementById("difficulty-select").value;
+        mode = document.querySelector('input[name="mode"]:checked').value;
+        const pool = questions.filter(q => (category === "all" || q.category === category) && (difficulty === "all" || q.difficulty === difficulty));
+        if (!pool.length) {
+          document.getElementById("setup-note").textContent = "Für diese Auswahl sind keine Fragen vorhanden. Bitte ändere Themenfeld oder Niveau.";
+          return;
+        }
+        if (mode === "daily") round = [getDailyQuestion(pool)];
+        else {
+          round = shuffle(pool).slice(0, 10);
+          if (mode === "exam" && round.length < 10) {
+            const expanded = [...round];
+            while (expanded.length < 10) expanded.push(pool[expanded.length % pool.length]);
+            round = shuffle(expanded);
+          }
+        }
+        index = 0; score = 0; locked = false; earned = new Set(); selections = []; examRecords = [];
+        setup.hidden = true; results.hidden = true; play.hidden = false;
+        const exam = mode === "exam";
+        warning.hidden = !exam; endButton.hidden = !exam;
+        document.getElementById("setup-note").textContent = "Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.";
+        if (timerId) window.clearInterval(timerId);
+        startedAt = Date.now();
+        if (exam) {
+          deadline = startedAt + 10 * 60 * 1000;
+          timer.setAttribute("aria-label", "Verbleibende Zeit");
+        } else {
+          timer.classList.remove("urgent");
+          timer.setAttribute("aria-label", "Verstrichene Zeit");
+        }
+        updateTimer();
+        timerId = window.setInterval(updateTimer, 250);
+        renderQuestion();
+        play.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function updateTimer() {
+        if (mode === "exam") {
+          const remaining = Math.max(0, deadline - Date.now());
+          const totalSeconds = Math.ceil(remaining / 1000);
+          timer.textContent = `${String(Math.floor(totalSeconds / 60)).padStart(2, "0")}:${String(totalSeconds % 60).padStart(2, "0")}`;
+          timer.classList.toggle("urgent", remaining <= 60_000);
+          if (remaining <= 0) finishRound(true);
+          return;
+        }
+        const elapsed = Math.floor(Math.max(0, Date.now() - startedAt) / 1000);
+        timer.textContent = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(elapsed % 60).padStart(2, "0")}`;
+      }
+
+      function formatDuration(seconds) {
+        return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+      }
+
+      function renderTable(rows) {
+        const table = document.createElement("table");
+        table.className = "truth-table";
+        table.setAttribute("aria-label", "Wahrheitstabelle");
+        const body = document.createElement("tbody");
+        rows.forEach((row, rowIndex) => {
+          const tr = document.createElement("tr");
+          row.forEach((value, colIndex) => {
+            const cell = document.createElement(rowIndex === 0 ? "th" : "td");
+            if (rowIndex === 0 && colIndex === 0) cell.scope = "col";
+            cell.textContent = value;
+            tr.append(cell);
+          });
+          body.append(tr);
+        });
+        table.append(body);
+        return table;
+      }
+
+      function renderQuestion() {
+        const q = round[index];
+        locked = false;
+        selections = [];
+        questionTitle.textContent = q.prompt;
+        questionMeta.textContent = `${q.category} · ${difficultyNames[q.difficulty]}`;
+        questionNote.textContent = q.type === "multi" ? "Mehrfachauswahl · Nur alle richtigen und keine falschen Antworten ergeben einen Punkt." :
+          q.type === "numeric" ? `Zahlenwert${q.unit ? ` · Einheit: ${q.unit}` : ""} · Toleranz ±${q.tolerance}${q.unit ? ` ${q.unit}` : ""}` :
+          q.type === "truth" ? "Ausgang aus der Tabelle ableiten · Eine Antwort wählen." :
+          q.type === "debug" ? "Fehlerdiagnose · Eine Antwort wählen." : "Einfachauswahl · Eine Antwort wählen.";
+        questionExtra.replaceChildren();
+        if (q.type === "truth") questionExtra.append(renderTable(q.rows));
+        if (q.type === "debug") {
+          const code = document.createElement("pre");
+          code.className = "code-sample";
+          code.setAttribute("aria-label", "Codebeispiel");
+          code.textContent = q.snippet;
+          questionExtra.append(code);
+        }
+        answerArea.replaceChildren();
+        if (q.type === "numeric") {
+          const wrap = document.createElement("div");
+          wrap.className = "numeric-wrap";
+          const input = document.createElement("input");
+          input.id = "numeric-answer";
+          input.className = "numeric-input";
+          input.type = "text";
+          input.inputMode = "decimal";
+          input.autocomplete = "off";
+          input.setAttribute("aria-label", `Antwort als Zahlenwert${q.unit ? ` in ${q.unit}` : ""}`);
+          input.placeholder = "Deine Antwort";
+          const unit = document.createElement("span");
+          unit.className = "unit";
+          unit.textContent = q.unit || "Wert";
+          wrap.append(input, unit);
+          answerArea.append(wrap);
+        } else {
+          const group = document.createElement("div");
+          group.className = "answer-options";
+          group.setAttribute("role", "group");
+          group.setAttribute("aria-label", q.type === "multi" ? "Mehrfachauswahl" : "Antwortmöglichkeiten");
+          q.choices.forEach((choice, choiceIndex) => {
+            const label = document.createElement("label");
+            label.className = "answer-option";
+            const input = document.createElement("input");
+            input.type = q.type === "multi" ? "checkbox" : "radio";
+            input.name = "answer";
+            input.value = String(choiceIndex);
+            input.addEventListener("change", () => {
+              if (q.type === "multi") {
+                selections = [...group.querySelectorAll("input:checked")].map(el => Number(el.value));
+              } else selections = [choiceIndex];
+              submitButton.disabled = false;
+            });
+            const text = document.createElement("span");
+            text.textContent = choice;
+            label.append(input, text);
+            group.append(label);
+          });
+          answerArea.append(group);
+        }
+        const exam = mode === "exam";
+        liveScore.hidden = exam;
+        liveScore.textContent = `Punktestand ${score} von ${round.length}`;
+        roundLabel.textContent = `${exam ? "PRÜFUNG" : mode === "daily" ? "FRAGE DES TAGES" : "TRAINING"} · FRAGE ${String(index + 1).padStart(2, "0")} / ${String(round.length).padStart(2, "0")}`;
+        progress.setAttribute("aria-valuemax", String(round.length));
+        progress.setAttribute("aria-valuenow", String(index));
+        progressFill.style.width = `${(index / round.length) * 100}%`;
+        feedback.textContent = "";
+        feedback.className = "answer-feedback";
+        submitButton.hidden = exam;
+        submitButton.disabled = q.type !== "numeric";
+        nextButton.disabled = !exam;
+        nextButton.textContent = exam ? (index === round.length - 1 ? "Letzte Antwort abgeben →" : "Antwort abgeben →") : index === round.length - 1 ? "Ergebnis →" : "Weiter →";
+        document.getElementById("confirm-end").hidden = true;
+        questionTitle.focus({ preventScroll: true });
+      }
+
+      function getSubmittedValue(q) {
+        if (q.type === "numeric") {
+          const raw = document.getElementById("numeric-answer").value.trim().replace(",", ".");
+          if (raw === "" || !Number.isFinite(Number(raw))) return { valid: false, value: null };
+          return { valid: true, value: Number(raw) };
+        }
+        const inputs = [...answerArea.querySelectorAll("input:checked")];
+        if (!inputs.length) return { valid: false, value: null };
+        return { valid: true, value: inputs.map(input => Number(input.value)) };
+      }
+
+      function isCorrect(q, value) {
+        if (q.type === "numeric") return Math.abs(value - q.answer) <= q.tolerance + Number.EPSILON * Math.max(1, Math.abs(q.answer));
+        if (q.type === "multi") return value.length === q.answer.length && value.every(item => q.answer.includes(item));
+        return value.length === 1 && value[0] === q.answer;
+      }
+
+      function markAnswer(q, value, correct) {
+        const labels = [...answerArea.querySelectorAll(".answer-option")];
+        if (q.type === "numeric") return;
+        labels.forEach((label, i) => {
+          label.classList.toggle("is-correct", correct && (q.type === "multi" ? q.answer.includes(i) : i === q.answer));
+          label.classList.toggle("is-wrong", !correct && value.includes(i));
+        });
+      }
+
+      function submitPractice() {
+        if (locked) return;
+        const q = round[index];
+        const response = getSubmittedValue(q);
+        if (!response.valid) {
+          feedback.textContent = q.type === "numeric" ? "Bitte gib einen gültigen Zahlenwert ein." : "Wähle mindestens eine Antwort aus.";
+          feedback.className = "answer-feedback bad";
+          return;
+        }
+        const correct = isCorrect(q, response.value);
+        markAnswer(q, response.value, correct);
+        if (correct) {
+          if (!earned.has(index)) score++;
+          earned.add(index);
+          liveScore.textContent = `Punktestand ${score} von ${round.length}`;
+          locked = true;
+          feedback.textContent = `Richtig. ${q.explain}`;
+          feedback.className = "answer-feedback good";
+          answerArea.querySelectorAll("input").forEach(input => input.disabled = true);
+          nextButton.disabled = false;
+          submitButton.disabled = true;
+        } else {
+          feedback.textContent = `Noch nicht ganz. ${q.explain} Passe deine Antwort an und versuche es erneut.`;
+          feedback.className = "answer-feedback bad";
+          if (q.type === "numeric") {
+            const input = document.getElementById("numeric-answer");
+            input.focus();
+            input.select();
+          }
+        }
+      }
+
+      function submitExam() {
+        const q = round[index];
+        const response = getSubmittedValue(q);
+        examRecords[index] = { question: q, value: response.valid ? response.value : null, correct: response.valid && isCorrect(q, response.value) };
+        if (examRecords[index].correct) score++;
+        moveNext();
+      }
+
+      function moveNext() {
+        if (index === round.length - 1) {
+          finishRound(false);
+          return;
+        }
+        index++;
+        renderQuestion();
+      }
+
+      function finishRound(expired) {
+        if (play.hidden || results.hidden === false) return;
+        const elapsedSeconds = Math.floor(Math.max(0, Date.now() - startedAt) / 1000);
+        const elapsedText = formatDuration(elapsedSeconds);
+        if (timerId) {
+          window.clearInterval(timerId);
+          timerId = 0;
+        }
+        if (mode === "exam") {
+          for (let i = 0; i < round.length; i++) {
+            if (!examRecords[i]) examRecords[i] = { question: round[i], value: null, correct: false };
+          }
+          score = examRecords.filter(record => record.correct).length;
+        }
+        play.hidden = true;
+        results.hidden = false;
+        const title = document.createElement("h2");
+        title.className = "panel-title";
+        title.id = "result-title";
+        title.textContent = expired ? "Die Zeit ist um." : mode === "exam" ? "Prüfungsrunde abgeschlossen." : mode === "daily" ? "Tagesfrage gelöst." : "Runde abgeschlossen.";
+        const kicker = document.createElement("p");
+        kicker.className = "panel-kicker";
+        kicker.textContent = mode === "exam" ? "DEIN ERGEBNIS" : "DEIN TRAININGSSTAND";
+        const scoreEl = document.createElement("strong");
+        scoreEl.className = "result-score";
+        scoreEl.textContent = `${score} / ${round.length}`;
+        const copy = document.createElement("p");
+        copy.className = "result-copy";
+        copy.textContent = mode === "exam" ? `${score} von ${round.length} Antworten richtig. Bearbeitungszeit: ${elapsedText}.${expired ? " Die Runde wurde nach Ablauf der 10 Minuten automatisch abgegeben." : " Deine Antworten und Erklärungen erscheinen erst jetzt."}` :
+          `${score} von ${round.length} Fragen richtig. Bearbeitungszeit: ${elapsedText}. ${score === round.length ? "Stark — das sitzt." : "Eine gute Grundlage für die nächste Runde."} Dein Ergebnis bleibt nur hier auf der Seite.`;
+        results.replaceChildren(kicker, title, scoreEl, copy);
+        if (mode === "exam") {
+          const list = document.createElement("ol");
+          list.className = "review-list";
+          list.setAttribute("aria-label", "Ergebnis und Lösungen");
+          examRecords.forEach((record, i) => {
+            const item = document.createElement("li");
+            item.className = `review-item${record.correct ? " correct" : ""}`;
+            const strong = document.createElement("strong");
+            strong.textContent = `${String(i + 1).padStart(2, "0")} · ${record.correct ? "Richtig" : "Nicht richtig"} — ${record.question.category}`;
+            const explanation = document.createElement("span");
+            explanation.textContent = record.question.explain;
+            item.append(strong, explanation);
+            list.append(item);
+          });
+          results.append(list);
+        }
+        const retry = document.createElement("button");
+        retry.className = "button start-button";
+        retry.type = "button";
+        retry.textContent = "Neue Runde konfigurieren ↻";
+        retry.addEventListener("click", backToSetup);
+        results.append(retry);
+        results.focus();
+        results.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function backToSetup() {
+        if (timerId) {
+          window.clearInterval(timerId);
+          timerId = 0;
+        }
+        play.hidden = true;
+        results.hidden = true;
+        setup.hidden = false;
+        document.getElementById("start-button").focus();
+        document.getElementById("challenge").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      document.getElementById("start-button").addEventListener("click", startRound);
+      submitButton.addEventListener("click", () => mode === "exam" ? submitExam() : submitPractice());
+      nextButton.addEventListener("click", () => mode === "exam" ? submitExam() : moveNext());
+      endButton.addEventListener("click", () => { confirmEnd.hidden = false; document.getElementById("confirm-finish").focus(); });
+      document.getElementById("confirm-finish").addEventListener("click", () => finishRound(false));
+      document.getElementById("cancel-finish").addEventListener("click", () => { confirmEnd.hidden = true; endButton.focus(); });
+      document.querySelectorAll('input[name="mode"]').forEach(input => input.addEventListener("change", () => {
+        document.getElementById("setup-note").textContent = input.value === "exam" ?
+          "10 Fragen · 10 Minuten · nicht pausierbar. Bei weniger als 10 passenden Fragen werden Fragen wiederholt." :
+          "Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.";
+      }));
+      validateQuestionBank();
+    })();
+  </script>
+</body>
+          </html><!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2e9">
   <meta name="description" content="Digitaltechnik verstehen: Grundlagen entdecken, Logik trainieren und Wissen direkt im Quiz anwenden.">
   <title>Bit für Bit — Digitaltechnik verstehen</title>
   <style>
