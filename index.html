@@ -4,9 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f2e9">
-  <meta name="description" content="Digitaltechnik verstehen, gezielt trainieren und dich in einer fairen Prüfungsrunde herausfordern.">
+  <meta name="description" id="meta-description" content="Digitaltechnik verstehen, gezielt trainieren und dich in einer fairen Prüfungsrunde herausfordern.">
   <title>Bit für Bit — Die Digitaltechnik-Challenge</title>
   <style>
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .language-control select { width: auto; min-width: 118px; min-height: 40px; padding: .4rem 1.7rem .4rem .55rem; font-size: .78rem; }
+    html[dir="rtl"] body { text-align: right; }
+    html[dir="rtl"] .topbar, html[dir="rtl"] .nav, html[dir="rtl"] .hero-links, html[dir="rtl"] .play-head, html[dir="rtl"] .question-actions { direction: rtl; }
+    html[dir="rtl"] .answer-option { text-align: right; }
+    html[dir="rtl"] .code-sample, html[dir="rtl"] .numeric-input, html[dir="rtl"] .timer, html[dir="rtl"] .truth-table { direction: ltr; text-align: left; }
+    html[dir="rtl"] .truth-table td, html[dir="rtl"] .truth-table th { text-align: center; }
+    html[dir="rtl"] .play-score { margin-left: 0; margin-right: auto; }
+    html[dir="rtl"] .review-item { border-left: 0; border-right: 3px solid #b94238; }
+    html[dir="rtl"] .review-item.correct { border-right-color: #628e1e; }
     :root {
       color-scheme: light;
       --paper: #f4f2e9; --paper-deep: #e9e7dc; --ink: #171b1b;
@@ -39,7 +49,8 @@
     .nav a:hover { color: var(--blue); }
     .nav .nav-cta { padding: .62rem .9rem; color: white; background: var(--ink); }
     .nav .nav-cta:hover { background: var(--blue); color: white; }
-    .hero { display: grid; grid-template-columns: minmax(0, .88fr) minmax(460px, 1.12fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3.7rem, 7vw, 6rem) 4.5rem; }
+    .hero { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3.7rem, 7vw, 6rem) 4.5rem; }
+    .hero > *, .console-wrap, .console-panel, #setup, #play, #results, #question-extra, .table-wrap { min-width: 0; }
     .eyebrow { display: flex; align-items: center; gap: .6rem; margin: 0 0 1.05rem; color: var(--blue); text-transform: uppercase; letter-spacing: .14em; font: 700 .7rem var(--mono); }
     .eyebrow::before { content: ""; width: 25px; height: 2px; background: currentColor; }
     h1, h2, h3, p { margin-top: 0; }
@@ -88,6 +99,7 @@
     .question-title { margin: 0 0 .85rem; font: 500 clamp(1.35rem, 2.7vw, 1.8rem)/1.18 var(--serif); letter-spacing: -.03em; }
     .question-note { margin: -.3rem 0 .7rem; color: var(--muted); font-size: .78rem; }
     .truth-table { width: auto; margin: .5rem 0 .85rem; border-collapse: collapse; font: 700 .78rem var(--mono); }
+    .table-wrap { width: 100%; max-width: 100%; overflow-x: auto; }
     .truth-table th, .truth-table td { min-width: 36px; padding: .27rem .55rem; border: 1px solid #c8cbc1; text-align: center; }
     .truth-table th { background: #f0efe8; }
     .code-sample { overflow-x: auto; margin: .45rem 0 .8rem; padding: .75rem; background: #20282b; color: #f6f5ec; font: .76rem/1.5 var(--mono); white-space: pre; }
@@ -148,7 +160,7 @@
     .footer-brand { margin: 0; font-weight: 800; letter-spacing: -.03em; }
     .footer-note { max-width: 600px; margin: 0; color: #bfc5bb; font-size: .75rem; }
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; gap: 2.2rem; }
+      .hero { grid-template-columns: minmax(0, 1fr); gap: 2.2rem; }
       .hero-copy { max-width: 640px; }
       .console-wrap { max-width: 740px; width: 100%; margin-inline: auto; }
       .topic-grid { grid-template-columns: repeat(2, 1fr); }
@@ -161,12 +173,14 @@
     }
     @media (max-width: 600px) {
       .wrap { width: min(100% - 36px, 520px); }
-      .topbar { min-height: 68px; }
+      .topbar { min-height: 68px; padding-block: .55rem; flex-wrap: wrap; }
       .brand { font-size: .78rem; }
-      .nav { gap: .55rem; }
+      .nav { width: 100%; justify-content: space-between; gap: .45rem; }
+      .language-control select { min-width: 92px; min-height: 38px; font-size: .68rem; padding-inline: .35rem; }
       .nav a { font-size: .71rem; }
       .nav a:first-child { display: none; }
-      .nav .nav-cta { padding: .5rem .6rem; }
+      #nav-topics { display: none; }
+      .nav .nav-cta { padding: .5rem .6rem; white-space: nowrap; flex: 0 0 auto; }
       .hero { padding-block: 3rem 3.3rem; }
       h1 { font-size: clamp(3.2rem, 15vw, 4.8rem); }
       .console-wrap { padding: .7rem; }
@@ -205,10 +219,10 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <a class="skip-link" href="#main" id="skip-link">Zum Inhalt springen</a>
   <header class="wrap topbar">
     <a class="brand" href="#" aria-label="Bit für Bit – Startseite"><span class="brand-mark" aria-hidden="true">01</span><span>BIT FÜR BIT <span aria-hidden="true">/</span> DIGITALTECHNIK</span></a>
-    <nav class="nav" aria-label="Hauptnavigation"><a href="#themen">Themen</a><a href="#material">Material</a><a class="nav-cta" href="#challenge">Challenge starten <span aria-hidden="true">↗</span></a></nav>
+    <nav class="nav" aria-label="Hauptnavigation"><label class="language-control"><span class="sr-only" id="language-label">Sprache</span><select id="language-select" aria-labelledby="language-label"><option value="de">Deutsch</option><option value="fr">Français</option><option value="ar">العربية</option></select></label><a href="#themen" id="nav-topics">Themen</a><a class="nav-cta" href="#challenge" id="nav-start">Challenge starten <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main id="main">
     <section class="wrap hero" aria-labelledby="hero-title">
@@ -271,28 +285,7 @@
         <article class="topic"><span class="topic-no">07 / MESSEN</span><h3>A/D- und D/A-Umsetzung</h3><p>Auflösung, Abtastung, Quantisierung und digitale Ausgabe.</p></article>
       </div>
     </section>
-    <section class="wrap materials" id="material" aria-labelledby="materials-title">
-      <div class="materials-intro"><div><p class="eyebrow">Zum Vertiefen</p><h2 id="materials-title">Dein Lernmaterial.</h2></div><p>Die Kursunterlagen zum Nachlesen und Üben — übersichtlich nach Themen sortiert. Öffne ein PDF, wenn du tiefer einsteigen möchtest.</p></div>
-      <div class="materials-list">
-        <section class="material-group" aria-labelledby="group-basics"><h3 id="group-basics">DIG 1 · Grundlagen</h3><div class="material-links">
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K01_Einfuehrung.pdf"><span>Einführung</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K02_Digitale_Codierung.pdf"><span>Digitale Codierung</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K03_Einfuehrung_VHDL.pdf"><span>Einführung in VHDL</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K04_Kombinatorische_Schaltungen.pdf"><span>Kombinatorische Schaltungen</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K05_Sequenzielle_Schaltungen.pdf"><span>Sequenzielle Schaltungen</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG1_K06_Schaltungsstrukturen.pdf"><span>Schaltungsstrukturen</span><span class="pdf-type">PDF ↗</span></a>
-        </div></section>
-        <section class="material-group" aria-labelledby="group-advanced"><h3 id="group-advanced">DIG 2 · Vertiefung</h3><div class="material-links">
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K06_Schaltungsstrukturen.pdf"><span>Schaltungsstrukturen</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K07_Realisierung_digitaler_Systeme.pdf"><span>Realisierung digitaler Systeme</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K08_VHDL-Vertiefung.pdf"><span>VHDL-Vertiefung</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K09_Programmierbare_Logik.pdf"><span>Programmierbare Logik</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K10_Halbleitertechnik.pdf"><span>Halbleitertechnik</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K11_Speicher.pdf"><span>Speicher</span><span class="pdf-type">PDF ↗</span></a>
-          <a class="material-link" href="https://dig-tech.github.io/quiz/pdf/DIG2_K12_AD_DA_Umsetzer.pdf"><span>A/D- und D/A-Umsetzer</span><span class="pdf-type">PDF ↗</span></a>
-        </div></section>
-      </div>
-    </section>
+
   </main>
   <footer class="footer"><div class="wrap footer-inner"><p class="footer-brand">BIT FÜR BIT <span aria-hidden="true">/</span> 01 → 10</p><p class="footer-note">Diese Seite ist eine Lernhilfe und ersetzt keine Kursunterlagen. Das verlinkte Quellenmaterial bleibt Eigentum der jeweiligen Rechteinhaber:innen. Alle Challenge-Fragen wurden eigenständig auf Grundlage allgemeinen Digitaltechnik-Wissens formuliert; sie reproduzieren keine Lehrbuchinhalte.</p></div></footer>
   <script>
@@ -357,7 +350,328 @@
         S(categories[6], "easy", "Was bezeichnet die Quantisierungsstufe eines idealen gleichmäßigen Wandlers?", ["Den Abstand zwischen zwei benachbarten darstellbaren Amplitudenwerten.", "Die Zeit zwischen zwei aufeinanderfolgenden Abtastungen.", "Die maximale Bitrate des Ausgangs.", "Die Anzahl der analogen Eingänge."], 0, "Die Quantisierungsstufe ist der Abstand zwischen benachbarten diskreten Pegeln. Bei N Bits und unipolarem Bereich Vref ist die Schrittweite im idealen Modell typischerweise Vref/2ᴺ.")
       ];
 
-      const difficultyNames = { easy: "Grundlagen", medium: "Aufbau", hard: "Vertiefung" };
+      const categoryNames = {
+        de: categories,
+        fr: ["Codage numérique et systèmes de numération", "Logique combinatoire", "Circuits séquentiels", "VHDL", "Logique programmable", "Mémoire et semi-conducteurs", "Conversion A/N et N/A"],
+        ar: ["الترميز الرقمي وأنظمة الأعداد", "المنطق التوافقي", "الدوائر التتابعية", "VHDL", "المنطق القابل للبرمجة", "الذاكرة وأشباه الموصلات", "التحويل من/إلى الإشارات الرقمية"]
+      };
+      const difficultyNamesByLocale = {
+        de: { easy: "Grundlagen", medium: "Aufbau", hard: "Vertiefung" },
+        fr: { easy: "Notions de base", medium: "Intermédiaire", hard: "Approfondissement" },
+        ar: { easy: "أساسيات", medium: "متوسط", hard: "متقدم" }
+      };
+      const ui = {
+        fr: {
+          consoleTag: 'BIT FÜR BIT <span aria-hidden="true">/</span> CONSOLE DU DÉFI', questionCount: "42 QUESTIONS · 07 THÈMES",
+          topicTag1: "01 / NOMBRES", topicTag2: "02 / LOGIQUE", topicTag3: "03 / ÉTATS", topicTag4: "04 / DÉCRIRE", topicTag5: "05 / RÉALISER", topicTag6: "06 / STOCKER", topicTag7: "07 / MESURER",
+          skip: "Aller au contenu", language: "Langue", nav: "Navigation principale", topicsNav: "Thèmes", startNav: "Lancer le défi",
+          brand: "Bit für Bit – accueil", heroEyebrow: "Vérifiez vos connaissances. Décodez les concepts.",
+          heroTitle: "Pensez en <em>0 et 1.</em>", heroCopy: "Sept thèmes, plusieurs formats de réponse et une épreuve chronométrée équitable. Entraînez-vous à votre rythme ou testez vos acquis sous pression.",
+          configure: "Configurer le défi", discover: "Découvrir les thèmes", heroNote: "42 questions originales · Sans compte, sans suivi",
+          console: "Défi de technologie numérique", panelKicker: "Votre prochaine étape", panelTitle: "Une manche, votre objectif.",
+          panelIntro: "Choisissez les thèmes et le niveau. En entraînement, le retour est immédiat ; en épreuve, les réponses restent cachées jusqu'à la fin.",
+          category: "Thème", allTopics: "Les sept thèmes", difficulty: "Difficulté", mixed: "Mixte",
+          easy: "Notions de base", medium: "Intermédiaire", hard: "Approfondissement",
+          practice: "S'entraîner", practiceNote: "Jusqu'à 10 questions · Explications immédiates", exam: "Épreuve", examNote: "10 questions · 10 minutes",
+          daily: "Question du jour", dailyNote: "Une nouvelle perspective", privacy: "Les réponses sont évaluées pour cette manche uniquement et ne sont pas enregistrées.",
+          start: "Commencer", formats: "Formats de réponse inclus", single: "CHOIX UNIQUE", multi: "CHOIX MULTIPLE", numeric: "VALEUR NUMÉRIQUE", truth: "TABLE DE VÉRITÉ", debug: "DÉBOGAGE",
+          roundProgress: "Progression de la manche", elapsed: "Temps écoulé", remaining: "Temps restant", score: "Score", question: "QUESTION",
+          submit: "Vérifier la réponse", next: "Suivant →", result: "Résultat →", submitExam: "Valider la réponse →", submitLast: "Valider la dernière réponse →",
+          endRound: "Terminer la manche", examWarning: "Épreuve sans pause. La manche se termine si vous la validez ou si le temps est écoulé.",
+          confirm: "Terminer la manche maintenant ? Les questions sans réponse compteront comme incorrectes.", confirmFinish: "Valider maintenant", back: "Retour",
+          topicsEyebrow: "Les éléments constitutifs", topicsTitle: "Sept façons<br>de penser le numérique.", topicsIntro: "Des codes numériques aux automates et aux convertisseurs : choisissez un thème dans le défi ou mélangez tous les chapitres.",
+          topic1: "Codage numérique et systèmes de numération", topic1d: "Binaire, hexadécimal, code Gray et nombres signés.", topic2: "Logique combinatoire", topic2d: "Fonctions booléennes, portes, tables et simplifications.",
+          topic3: "Circuits séquentiels", topic3d: "Bascules, fronts d'horloge, compteurs et séquences d'états.", topic4: "VHDL", topic4d: "Types, processus, signaux et recherche d'erreurs syntaxiques.",
+          topic5: "Logique programmable", topic5d: "LUT, PLD, configuration et pièges matériels courants.", topic6: "Mémoire et semi-conducteurs", topic6d: "Capacité, types de RAM et caractéristiques des composants numériques.",
+          topic7: "Conversion A/N et N/A", topic7d: "Résolution, échantillonnage, quantification et sortie numérique.",
+          footer: "Cette page est un support pédagogique et ne remplace pas les documents du cours. Les ressources citées restent la propriété de leurs ayants droit. Les questions du défi ont été rédigées de manière indépendante à partir de connaissances générales en technologie numérique ; elles ne reproduisent aucun contenu de manuel.",
+          noQuestions: "Aucune question ne correspond à cette sélection. Modifiez le thème ou le niveau.",
+          privateNote: "Les réponses sont évaluées pour cette manche uniquement et ne sont pas enregistrées.",
+          examSetup: "10 questions · 10 minutes · sans pause. Si moins de 10 questions correspondent, certaines seront répétées.",
+          labels: { multi: "Choix multiple · Un point est accordé uniquement si toutes les bonnes réponses, et aucune mauvaise, sont sélectionnées.", numeric: "Valeur numérique", unit: "Unité", tolerance: "Tolérance", truth: "Déduisez la sortie de la table · Choisissez une réponse.", debug: "Diagnostic d'erreur · Choisissez une réponse.", single: "Choix unique · Choisissez une réponse.", answerNumber: "Réponse numérique", answerChoices: "Choix de réponse", multipleChoices: "Choix multiple", truthTable: "Table de vérité", code: "Exemple de code",
+            invalidNumber: "Saisissez une valeur numérique valide.", choose: "Sélectionnez au moins une réponse.", correct: "Correct.", incorrect: "Pas tout à fait.", unanswered: "Aucune réponse sélectionnée.",
+            exam: "ÉPREUVE", dailyRound: "QUESTION DU JOUR", training: "ENTRAÎNEMENT", question: "QUESTION", resultTitleExpired: "Le temps est écoulé.", resultTitleExam: "Épreuve terminée.", resultTitleDaily: "Question du jour terminée.", resultTitleRound: "Manche terminée.",
+            resultExam: "VOTRE RÉSULTAT", resultTraining: "VOTRE SCORE D'ENTRAÎNEMENT", timeTaken: "Temps écoulé", automatic: " La manche a été remise automatiquement après les 10 minutes.", answersNow: " Vos réponses et les explications sont maintenant affichées.",
+            rightAnswers: "réponses correctes sur", rightQuestions: "questions correctes sur", strong: "Bravo, c'est maîtrisé.", foundation: "Une bonne base pour la prochaine manche.", localResult: "Votre résultat reste uniquement sur cette page.",
+            review: "Résultats et solutions", right: "Correct", wrong: "Incorrect", retry: "Configurer une nouvelle manche ↻",
+            questionTypes: ["Choix unique", "Choix multiple", "Valeur numérique", "Table de vérité", "Débogage"]
+          }
+        },
+        ar: {
+          consoleTag: 'BIT FÜR BIT <span aria-hidden="true">/</span> وحدة التحدي', questionCount: "42 سؤالًا · 07 موضوعات",
+          topicTag1: "01 / الأعداد", topicTag2: "02 / المنطق", topicTag3: "03 / الحالات", topicTag4: "04 / الوصف", topicTag5: "05 / التنفيذ", topicTag6: "06 / التخزين", topicTag7: "07 / القياس",
+          skip: "انتقل إلى المحتوى", language: "اللغة", nav: "التنقل الرئيسي", topicsNav: "الموضوعات", startNav: "ابدأ التحدي",
+          brand: "بتًّا بتًّا – الصفحة الرئيسية", heroEyebrow: "اختبر معرفتك. فكّك المفاهيم.",
+          heroTitle: "فكّر بمنطق <em>0 و1.</em>", heroCopy: "سبعة موضوعات وأنماط متعددة للإجابة واختبار عادل بوقت محدد. تدرّب بالسرعة التي تناسبك أو اختبر ما أتقنته تحت ضغط الوقت.",
+          configure: "إعداد التحدي", discover: "اكتشف الموضوعات", heroNote: "42 سؤالًا أصليًا · بلا حساب وبلا تتبّع",
+          console: "تحدي التقنية الرقمية", panelKicker: "خطوتك التالية", panelTitle: "جولة واحدة، وهدفك.",
+          panelIntro: "اختر الموضوعات والمستوى. ستحصل على ملاحظات فورية في التدريب، بينما تبقى إجابات الاختبار مخفية حتى النهاية.",
+          category: "الموضوع", allTopics: "الموضوعات السبعة", difficulty: "الصعوبة", mixed: "متنوع",
+          easy: "أساسيات", medium: "متوسط", hard: "متقدم",
+          practice: "تدريب", practiceNote: "حتى 10 أسئلة · شرح فوري", exam: "اختبار", examNote: "10 أسئلة · 10 دقائق",
+          daily: "سؤال اليوم", dailyNote: "منظور جديد", privacy: "تُقيَّم الإجابات في هذه الجولة فقط ولا تُحفَظ.",
+          start: "ابدأ الجولة", formats: "أنماط الإجابة المتاحة", single: "اختيار واحد", multi: "اختيارات متعددة", numeric: "قيمة رقمية", truth: "جدول حقيقة", debug: "استكشاف خطأ",
+          roundProgress: "تقدّم الجولة", elapsed: "الوقت المنقضي", remaining: "الوقت المتبقي", score: "النتيجة", question: "السؤال",
+          submit: "تحقّق من الإجابة", next: "التالي ←", result: "النتيجة ←", submitExam: "أرسل الإجابة ←", submitLast: "أرسل الإجابة الأخيرة ←",
+          endRound: "إنهاء الجولة", examWarning: "الاختبار بلا استراحة. ينتهي عند التسليم أو عند نفاد الوقت.",
+          confirm: "هل تريد إنهاء الجولة الآن؟ ستُحتسب الأسئلة التي لم تُجب عنها كإجابات خاطئة.", confirmFinish: "سلّم الآن", back: "عودة",
+          topicsEyebrow: "المكوّنات الأساسية", topicsTitle: "سبع طرق<br>للتفكير الرقمي.", topicsIntro: "من الترميز العددي إلى آلات الحالات والمحولات: اختر موضوعًا من قائمة التحدي أو اخلط الفصول كلها.",
+          topic1: "الترميز الرقمي وأنظمة الأعداد", topic1d: "الثنائي والسداسي عشري ورمز غراي والأعداد ذات الإشارة.", topic2: "المنطق التوافقي", topic2d: "الدوال البوليانية والبوابات والجداول والتبسيط.",
+          topic3: "الدوائر التتابعية", topic3d: "القلبات وحواف الساعة والعدادات وتسلسلات الحالات.", topic4: "VHDL", topic4d: "أنواع البيانات والعمليات والإشارات واكتشاف أخطاء الصياغة.",
+          topic5: "المنطق القابل للبرمجة", topic5d: "جداول البحث وPLD والتهيئة وأخطاء العتاد الشائعة.", topic6: "الذاكرة وأشباه الموصلات", topic6d: "السعة وأنواع RAM وخصائص المكوّنات الرقمية.",
+          topic7: "التحويل من/إلى الإشارات الرقمية", topic7d: "الدقة وأخذ العينات والتكميم والخرج الرقمي.",
+          footer: "هذه الصفحة أداة تعليمية ولا تغني عن مواد المقرر. تظل المواد المرجعية المذكورة ملكًا لأصحاب الحقوق المعنيين. صيغت أسئلة التحدي بصورة مستقلة استنادًا إلى المعارف العامة في التقنية الرقمية، ولا تنسخ محتوى الكتب الدراسية.",
+          noQuestions: "لا توجد أسئلة لهذا الاختيار. غيّر الموضوع أو المستوى.",
+          privateNote: "تُقيَّم الإجابات في هذه الجولة فقط ولا تُحفَظ.",
+          examSetup: "10 أسئلة · 10 دقائق · بلا استراحة. إذا لم تتوفر 10 أسئلة مطابقة فستُكرَّر بعض الأسئلة.",
+          labels: { multi: "اختيارات متعددة · تُمنح نقطة فقط عند اختيار كل الإجابات الصحيحة دون أي إجابة خاطئة.", numeric: "قيمة رقمية", unit: "الوحدة", tolerance: "هامش السماح", truth: "استنتج الخرج من الجدول · اختر إجابة واحدة.", debug: "تشخيص الخطأ · اختر إجابة واحدة.", single: "اختيار واحد · اختر إجابة واحدة.", answerNumber: "الإجابة كقيمة رقمية", answerChoices: "خيارات الإجابة", multipleChoices: "اختيارات متعددة", truthTable: "جدول الحقيقة", code: "مثال برمجي",
+            invalidNumber: "أدخل قيمة رقمية صحيحة.", choose: "اختر إجابة واحدة على الأقل.", correct: "إجابة صحيحة.", incorrect: "ليست صحيحة تمامًا.", unanswered: "لم يتم اختيار إجابة.",
+            exam: "اختبار", dailyRound: "سؤال اليوم", training: "تدريب", question: "السؤال", resultTitleExpired: "انتهى الوقت.", resultTitleExam: "اكتمل الاختبار.", resultTitleDaily: "تم حل سؤال اليوم.", resultTitleRound: "اكتملت الجولة.",
+            resultExam: "نتيجتك", resultTraining: "نتيجة التدريب", timeTaken: "الوقت المستغرق", automatic: " تم تسليم الجولة تلقائيًا بعد انتهاء الدقائق العشر.", answersNow: " تظهر الآن إجاباتك وشروحاتها.",
+            rightAnswers: "إجابة صحيحة من أصل", rightQuestions: "سؤال صحيح من أصل", strong: "ممتاز، لقد أتقنت ذلك.", foundation: "قاعدة جيدة للجولة القادمة.", localResult: "تبقى نتيجتك على هذه الصفحة فقط.",
+            review: "النتائج والإجابات", right: "صحيح", wrong: "غير صحيح", retry: "إعداد جولة جديدة ↻",
+            questionTypes: ["اختيار واحد", "اختيارات متعددة", "قيمة رقمية", "جدول الحقيقة", "استكشاف خطأ"]
+          }
+        }
+      };
+      const difficultyNames = difficultyNamesByLocale.de;
+      const questionTranslations = {
+        fr: [
+          ["Quel est l’écriture binaire de 45₁₀ ?", ["101101₂", "101011₂", "110101₂", "100101₂"], "45 = 32 + 8 + 4 + 1. Les positions 5, 3, 2 et 0 contiennent donc chacune un 1 : 101101₂."],
+          ["Quelle est la valeur décimale de 3A₁₆ ?", null, "3A₁₆ = 3 × 16 + 10 = 58. Dans le système hexadécimal, A représente la valeur dix.", "unit:"],
+          ["Quelles affirmations sur la représentation de −6 en complément à deux sur 8 bits sont exactes ?", ["Le bit de poids fort vaut 1.", "On l’obtient en inversant 00000110 puis en ajoutant 1.", "La plage représentable va de −128 à +127.", "Interprété comme un nombre non signé, le motif binaire vaut 6."], "L’inversion suivie de l’ajout de 1 donne 11111010. Sur 8 bits, la plage en complément à deux va de −128 à +127 ; interprété sans signe, ce motif vaut 250."],
+          ["On convertit une valeur binaire en code Gray : le premier bit reste identique, puis chaque bit est le XOR du bit binaire courant et du bit binaire précédent. Quel code Gray correspond à 1011₂ ?", ["1110", "1011", "1101", "1001"], "Le premier bit Gray vaut 1. Ensuite, 1⊕0=1, 0⊕1=1 et 1⊕1=0 : le code Gray est 1110.", [["Valeur binaire", "1", "0", "1", "1"], ["Bit Gray", "1", "1", "1", "0"]]],
+          ["Un système interprète chaque groupe BCD de quatre bits comme un chiffre décimal. Quelle est l’erreur pour l’entrée 1010₂ ?", ["Cette valeur n’est pas valide en BCD : un chiffre décimal va seulement de 0000 à 1001.", "C’est le chiffre BCD valide 10.", "Le BCD n’autorise que les chiffres pairs.", "La valeur doit d’abord être lue comme un code Gray."], "Un chiffre BCD code exactement un chiffre décimal de 0 à 9. Les motifs binaires 1010 à 1111 ne sont donc pas valides.", null, "Entrée BCD : 1010"],
+          ["Quel nombre décimal représente 100111₂ en tant que nombre binaire non signé ?", ["37", "39", "41", "49"], "100111₂ = 32 + 4 + 2 + 1 = 39. Ici, le nombre est explicitement interprété sans signe."],
+          ["Pour y = (a ET b) OU c, quelle sortie donne la ligne a=1, b=0, c=1 ?", ["0", "1"], "a ET b vaut 1 ET 0 = 0. Avec c=1, on obtient 0 OU 1 = 1.", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"], ["c", "0", "0", "1", "1"]]],
+          ["Selon les lois de De Morgan, quelles expressions sont équivalentes à NON(A OU B) ?", ["(NON A) ET (NON B)", "NON(A) OU NON(B)", "NON(A ET B)", "(NON A) ET B"], "La négation d’un OU se distribue sur les deux entrées et transforme OU en ET : ¬(A∨B)=¬A∧¬B."],
+          ["Quelle valeur donne A XOR B lorsque A=1 et B=1 ?", ["0", "1", "La sortie est indéfinie.", "2"], "XOR vaut 1 uniquement lorsque les entrées sont différentes. Ici elles sont égales, la sortie vaut donc 0."],
+          ["Dans un processus VHDL combinatoire, y n’est pas affecté dans chaque branche. Quel matériel non souhaité peut en résulter ?", ["Un latch transparent qui conserve l’ancienne valeur lorsque enable='0'.", "Une bascule D commandée par front.", "Un inverseur supplémentaire sur l’entrée d’horloge.", "Une sortie purement combinatoire sans état mémorisé."], "Si y n’est pas affecté lorsque enable='0', son ancienne valeur doit être conservée. Dans ce type de processus, cela infère généralement un latch."],
+          ["Combien de sorties possède un décodeur idéal 3 vers 8 ?", null, "Trois bits d’entrée codent 2³=8 combinaisons ; une sortie du décodeur est prévue pour chacune.", "unit:outputs"],
+          ["Quelle fonction décrit correctement un multiplexeur 2:1 avec l’entrée de sélection s ?", ["y = (¬s ET d₀) OU (s ET d₁)", "y = d₀ ET d₁, indépendamment de s", "y = s XOR d₀ XOR d₁", "y = (s OU d₀) ET d₁"], "Pour s=0, le multiplexeur choisit d₀ ; pour s=1, il choisit d₁. La somme des deux termes activés décrit exactement ce comportement."],
+          ["Quand une bascule D déclenchée sur front montant échantillonne-t-elle l’entrée D ?", ["Au front montant de l’horloge.", "Pendant toute la phase haute de l’horloge.", "Uniquement au front descendant.", "Dès que la valeur de D change."], "Une bascule D sur front montant échantillonne D au front montant et conserve ensuite la valeur capturée."],
+          ["Un compteur binaire ascendant de 2 bits démarre à 00 et s’incrémente modulo 4. Quel état suit trois fronts d’horloge ?", ["00", "01", "10", "11"], "La séquence est 00 → 01 → 10 → 11. Après trois fronts, le compteur indique 11.", [["Nombre de fronts", "0", "1", "2", "3"], ["État", "00", "01", "10", "11"]]],
+          ["Quelles affirmations sur une bascule D sont exactes ?", ["Elle mémorise un état dans le temps.", "Pour un modèle déclenché sur front, sa sortie suit constamment l’entrée D.", "Son état peut dépendre d’un front d’horloge.", "Elle nécessite toujours deux entrées d’horloge."], "Une bascule est un élément mémoire qui capture son entrée au front d’horloge spécifié. Ce n’est pas un latch transparent et elle ne requiert pas nécessairement deux entrées d’horloge."],
+          ["Un compteur synchrone à deux bits doit compter vers le haut modulo 4. Quelle est l’erreur dans cette séquence d’états ?", ["L’état 11 manque ; modulo 4, la séquence doit être 00, 01, 10, 11, 00.", "Un compteur 2 bits ne peut pas atteindre l’état 10.", "Modulo 4, le compteur doit passer de 10 à 01.", "Un compteur synchrone ne peut pas être cyclique."], "Deux bits offrent quatre valeurs. Le compteur doit parcourir les quatre codes 00, 01, 10 et 11 avant de revenir à 00."],
+          ["Combien d’états différents possède un compteur binaire idéal de 4 bits ?", null, "Avec quatre bits indépendants, il existe 2⁴ = 16 états possibles.", "unit:states"],
+          ["Quel est généralement l’effet d’une remise à zéro asynchrone d’une bascule ?", ["Elle réinitialise l’état indépendamment du prochain front d’horloge.", "Elle agit uniquement sur un front montant.", "Elle inverse l’état mémorisé à chaque horloge.", "Elle bloque définitivement l’entrée de données."], "Une remise à zéro asynchrone agit indépendamment de l’horloge. Une remise à zéro synchrone n’est évaluée qu’au front actif."],
+          ["Quelle bibliothèque VHDL est couramment utilisée pour le type unsigned et les opérations arithmétiques normalisées ?", ["ieee.numeric_std", "ieee.textio", "std.env", "work.bitstream"], "numeric_std fournit les types unsigned et signed ainsi que des opérations numériques normalisées."],
+          ["Quelle syntaxe VHDL permet de sélectionner correctement deux valeurs alternatives dans une branche case ?", ["Les alternatives d’un choix when sont séparées par | et non par or.", "Dans case, toutes les valeurs doivent être reliées par and.", "L’erreur est le point-virgule après y <= '0'.", "VHDL n’autorise pas when others."], "Dans une instruction case, plusieurs alternatives d’un choix when sont séparées par une barre verticale, par exemple when \"00\" | \"01\" =>."],
+          ["Un processus VHDL combinatoire lit a, b et sel. Quels signaux doivent figurer dans une liste de sensibilité complète ?", ["a", "b", "sel", "Uniquement clk, même si le processus ne teste aucun front."], "Un processus combinatoire doit être réévalué lorsque toute entrée lue change. Ici, la liste contient a, b et sel."],
+          ["Combien de bits contient le vecteur VHDL std_logic_vector(7 downto 0) ?", null, "Les indices 7 à 0 représentent huit éléments au total.", "unit:bits"],
+          ["Le code VHDL combinatoire ci-dessous réalise y = a ET b. Quelle sortie obtient-on pour a=1 et b=0 ?", ["0", "1"], "Le code ne produit 1 que lorsque les deux signaux valent 1. Pour a=1 et b=0, y vaut donc 0.", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"]]],
+          ["Que signifie l’affectation VHDL q <= d dans un processus cadencé ?", ["Elle planifie la mise à jour du signal ; contrairement à une variable, le nouvel état n’est pas visible immédiatement à la ligne suivante.", "Elle met obligatoirement q à jour avant la ligne suivante du processus.", "Elle est réservée aux constantes.", "Elle crée automatiquement une remise à zéro asynchrone."], "Une affectation de signal planifie sa mise à jour pour une phase ultérieure de la simulation. C’est différent de la mise à jour immédiate d’une variable avec :=."],
+          ["Combien de combinaisons d’entrée différentes une LUT à trois bits d’adresse peut-elle représenter ?", ["6", "8", "3", "16"], "Trois bits d’adresse sélectionnent 2³ = 8 positions mémoire, c’est-à-dire huit combinaisons d’entrée."],
+          ["Quelles affirmations sur les structures logiques programmables courantes sont exactes ?", ["Dans une PLA, les plans ET et OU sont programmables.", "Dans une PAL classique, le plan ET est programmable et le plan OU est câblé en dur.", "Un CPLD peut relier plusieurs blocs logiques programmables.", "Une LUT ne peut en principe réaliser aucune fonction booléenne."], "Une PLA offre des plans ET et OU programmables ; dans une PAL classique, seul le plan ET l’est généralement. Un CPLD relie plusieurs blocs programmables."],
+          ["Une sortie FPGA doit initialement suivre une seule source. Quel est le problème de cette description VHDL ?", ["Deux pilotes actifs simultanément peuvent provoquer un conflit ou produire X avec std_logic.", "VHDL n’autorise que les signaux nommés y.", "Les affectations sont combinées en une porte ET.", "La deuxième ligne est un générateur d’horloge valide."], "Les deux affectations concurrentes pilotent y en même temps. Si leurs valeurs diffèrent, la résolution du type std_logic peut signaler un conflit par X."],
+          ["Une LUT de 2 bits est programmée avec les valeurs y=0,1,1,0 pour les adresses 00,01,10,11. Quelle sortie correspond à l’adresse 10 ?", ["0", "1"], "Dans la configuration donnée, la troisième valeur correspond à l’adresse 10. Cette valeur de table est 1.", [["Adresse", "00", "01", "10", "11"], ["Sortie LUT", "0", "1", "1", "0"]]],
+          ["Combien de bits de configuration faut-il à une LUT simple à 4 bits d’adresse et une sortie ?", null, "La LUT mémorise une sortie pour chacune des 2⁴ adresses possibles ; il faut donc 16 bits de configuration.", "unit:bits"],
+          ["Pourquoi les blocs logiques d’un FPGA sont-ils souvent reliés par des interconnexions programmables ?", ["Pour configurer après fabrication la fonction et les connexions des blocs pour différents circuits.", "Pour que le FPGA n’ait pas besoin d’alimentation.", "Pour transmettre tous les signaux internes sous forme analogique.", "Pour conserver définitivement la configuration sans mémoire."], "Les interconnexions programmables relient les blocs de façon flexible pour former un circuit numérique donné. L’alimentation et le stockage de la configuration restent nécessaires."],
+          ["Quelle affirmation décrit correctement la SRAM par rapport à la DRAM ?", ["La SRAM n’a pas besoin d’être rafraîchie périodiquement, mais sa densité est généralement plus faible.", "La SRAM est volatile et doit être rafraîchie ligne par ligne.", "La DRAM conserve durablement les données sans alimentation.", "La SRAM est composée uniquement de condensateurs."], "La SRAM conserve son état dans un circuit bistable et n’a pas besoin de cycles de rafraîchissement. La DRAM stocke une charge et doit être rafraîchie ; la SRAM occupe généralement plus de surface par bit."],
+          ["Quelles affirmations sur la DRAM sont exactes ?", ["La charge stockée doit être rafraîchie périodiquement.", "La DRAM est généralement volatile.", "Une cellule DRAM comprend souvent un transistor et un condensateur.", "La DRAM ne consomme jamais d’énergie pour conserver les données."], "La DRAM stocke généralement un bit sous forme de charge dans un condensateur, qui doit être rafraîchi régulièrement. Les données sont perdues sans alimentation."],
+          ["Une mémoire est organisée en 4 Ki × 8 bits. Quelle est sa capacité en octets ?", null, "4 Ki = 4 × 1024 mots mémoire. À 8 bits, soit un octet par mot, cela représente 4096 octets.", "unit:bytes"],
+          ["Un composant possède 10 lignes d’adresse indépendantes. Quelle affirmation sur le nombre d’emplacements adressables est correcte ?", ["Il y a 2¹⁰ = 1024 emplacements adressables ; la largeur des données n’est pas connue à elle seule.", "Il y a exactement 10 emplacements et 10 bits de données.", "Il y a 20 emplacements.", "Chaque ligne d’adresse désigne exactement un emplacement."], "Dix bits d’adresse indépendants codent 2¹⁰ adresses distinctes. Le nombre de bits par mot dépend des lignes de données, pas des lignes d’adresse."],
+          ["Une mémoire possède 12 lignes d’adresse et est organisée en mots. Combien d’adresses différentes sont possibles ?", ["1024", "2048", "4096"], "Avec 12 bits d’adresse, il existe 2¹² = 4096 combinaisons d’adresse distinctes.", [["Bits d’adresse", "10", "11", "12"], ["Adresses", "1024", "2048", "4096"]]],
+          ["Pourquoi un inverseur CMOS statique consomme-t-il idéalement très peu de puissance statique dans un état logique stable ?", ["Dans le modèle idéal, un seul des deux chemins de transistor conduit ; aucun chemin direct permanent ne relie l’alimentation à la masse.", "Les deux transistors MOS sont toujours entièrement conducteurs.", "Les composants CMOS fonctionnent sans alimentation.", "La sortie est isolée par un condensateur pour chaque état logique."], "Dans un inverseur CMOS stable, le transistor pMOS ou nMOS conduit idéalement, mais pas les deux comme un court-circuit permanent entre alimentation et masse. Les commutations et les courants de fuite réels consomment néanmoins de l’énergie."],
+          ["Un CAN unipolaire idéal de 8 bits utilise Vref=2,56 V et 256 intervalles égaux. Quelle est la largeur d’un intervalle ?", null, "La largeur vaut Vref/2⁸ = 2,56 V/256 = 0,01 V.", "unit:v"],
+          ["Quelle fréquence d’échantillonnage minimale le critère de Nyquist exige-t-il pour un signal limité en bande dont la fréquence maximale est 4 kHz ?", ["8 kHz", "4 kHz", "2 kHz", "16 kHz"], "La fréquence d’échantillonnage doit être au moins deux fois la fréquence maximale du signal : 2 × 4 kHz = 8 kHz. En pratique, les filtres et la marge par rapport à la limite sont importants."],
+          ["Quelles mesures ou affirmations sont pertinentes pour une conversion A/N ?", ["Un filtre analogique anti-repliement limite les fréquences avant l’échantillonnage.", "Avec la même plage, davantage de bits de quantification donnent des intervalles plus fins.", "La fréquence d’échantillonnage peut être inférieure à deux fois la fréquence maximale sans risque de repliement.", "La quantification associe une mesure à un code numérique discret."], "Un filtre préalable limite le spectre ; davantage de bits augmentent le nombre de niveaux. La quantification associe une mesure continue à un code discret."],
+          ["Un CAN idéal de 3 bits a Vref=8 V et huit intervalles égaux. La valeur est explicitement arrondie vers le bas à l’intervalle. Quel code obtient-on pour 5,2 V ?", ["100", "101", "110", "111"], "Chaque intervalle mesure 8 V/8 = 1 V. 5,2 V se trouve dans l’intervalle 5–6 V, dont le code selon la règle d’arrondi donnée est 101.", [["Plage d’entrée (V)", "0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8"], ["Code", "000", "001", "010", "011", "100", "101", "110", "111"]]],
+          ["Un CNA R-2R idéal de 4 bits utilise b₃ comme bit de poids fort. Quelle est l’erreur dans cette pondération ?", ["Les poids sont inversés : b₃ est le bit de poids fort et doit idéalement recevoir le poids le plus élevé.", "Les réseaux R-2R ne peuvent pas traiter des bits numériques.", "Tous les bits d’un CNA idéal doivent toujours avoir le même poids.", "Seul le bit de poids faible peut commuter une résistance."], "Dans un CNA à pondération binaire courante, le bit de poids fort fournit la plus grande part de la sortie. Pour quatre bits, les poids idéaux sont proportionnels à 1/2, 1/4, 1/8 et 1/16.", null, "Prévu : b₃ pèse 1/16 Vref et b₀ pèse 1/2 Vref."],
+          ["Que désigne le pas de quantification d’un convertisseur idéal uniforme ?", ["L’écart entre deux valeurs d’amplitude représentables voisines.", "Le temps entre deux échantillons successifs.", "Le débit binaire maximal de la sortie.", "Le nombre d’entrées analogiques."], "Le pas de quantification est l’écart entre deux niveaux discrets voisins. Pour N bits et une plage unipolaire Vref, le pas idéal vaut généralement Vref/2ᴺ."]
+        ],
+        ar: [
+          ["ما التمثيل الثنائي للعدد 45₁₀؟", ["101101₂", "101011₂", "110101₂", "100101₂"], "45 = 32 + 8 + 4 + 1. لذلك تكون البتات في المواضع 5 و3 و2 و0 مساوية لـ1، أي 101101₂."],
+          ["ما القيمة العشرية للعدد 3A₁₆؟", null, "3A₁₆ = 3 × 16 + 10 = 58. يرمز الحرف A في النظام الست عشري إلى القيمة عشرة.", "unit:"],
+          ["أي العبارات صحيحة عن تمثيل −6 بمتمم الاثنين ذي 8 بتات؟", ["البت الأعلى قيمة يساوي 1.", "نحصل عليه بعكس 00000110 ثم إضافة 1.", "يتراوح المجال الممكن بين −128 و+127.", "إذا قُرئ النمط كعدد غير موقّع فقيمته 6."], "يؤدي العكس ثم إضافة واحد إلى 11111010. يتراوح مجال متمم الاثنين ذي 8 بتات بين −128 و+127؛ وقيمة هذا النمط دون إشارة هي 250."],
+          ["يُحوَّل عدد ثنائي إلى رمز غراي: يبقى البت الأول كما هو، ثم يُحسب XOR بين كل بت ثنائي والبت الثنائي السابق له. ما رمز غراي المقابل لـ1011₂؟", ["1110", "1011", "1101", "1001"], "بت غراي الأول هو 1. ثم 1⊕0=1 و0⊕1=1 و1⊕1=0، لذا يكون رمز غراي 1110.", [["القيمة الثنائية", "1", "0", "1", "1"], ["بت غراي", "1", "1", "1", "0"]]],
+          ["يفسّر نظام كل مجموعة BCD من أربعة بتات على أنها رقم عشري. ما الخطأ في الإدخال 1010₂؟", ["هذا نمط غير صالح في BCD، إذ يمتد الرقم العشري من 0000 إلى 1001 فقط.", "إنه رقم BCD صالح قيمته 10.", "يسمح BCD بالأرقام الزوجية فقط.", "يجب أولًا قراءته كرمز غراي."], "يرمّز BCD رقمًا عشريًا واحدًا من 0 إلى 9. لذلك لا تصلح الأنماط من 1010 إلى 1111 لهذا الغرض.", null, "إدخال BCD: 1010"],
+          ["ما العدد العشري الذي يمثله 100111₂ بوصفه عددًا ثنائيًا غير موقّع؟", ["37", "39", "41", "49"], "100111₂ = 32 + 4 + 2 + 1 = 39. ويُقرأ العدد هنا صراحةً بوصفه غير موقّع."],
+          ["للدالة y = (a AND b) OR c، ما الخرج عند a=1 وb=0 وc=1؟", ["0", "1"], "a AND b تساوي 1 AND 0 = 0. ومع c=1 تصبح النتيجة 0 OR 1 = 1.", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"], ["c", "0", "0", "1", "1"]]],
+          ["وفق قوانين دي مورغان، أي التعبيرات تكافئ NOT(A OR B)؟", ["(NOT A) AND (NOT B)", "NOT(A) OR NOT(B)", "NOT(A AND B)", "(NOT A) AND B"], "يتوزع نفي OR على المدخلين ويحوّل OR إلى AND: ¬(A∨B)=¬A∧¬B."],
+          ["ما قيمة A XOR B عندما A=1 وB=1؟", ["0", "1", "الخرج غير محدد.", "2"], "تساوي XOR واحدًا فقط عندما يختلف المدخلان. وهما هنا متساويان، لذا يكون الخرج 0."],
+          ["في عملية VHDL توافقية، لا تُسنَد قيمة إلى y في كل الفروع. ما العتاد غير المقصود الذي قد ينتج؟", ["مزلاج شفاف يحتفظ بالقيمة السابقة عندما enable='0'.", "قلبة D تعمل بحافة الساعة.", "عاكس إضافي عند مدخل الساعة.", "خرج توافقي بحت بلا حالة مخزنة."], "إذا لم تُسنَد قيمة إلى y عندما enable='0' فيجب الاحتفاظ بقيمته السابقة. ويؤدي ذلك عادةً إلى استنتاج مزلاج في هذه العملية."],
+          ["كم خرجًا يملك مفكّك ترميز مثالي من 3 إلى 8؟", null, "ترمّز ثلاثة بتات دخل 2³=8 تركيبات مختلفة؛ ويُخصّص خرج لكل تركيبة.", "unit:outputs"],
+          ["أي دالة تصف مُبدّلًا 2:1 بمدخل اختيار s على نحو صحيح؟", ["y = (¬s AND d₀) OR (s AND d₁)", "y = d₀ AND d₁ بصرف النظر عن s", "y = s XOR d₀ XOR d₁", "y = (s OR d₀) AND d₁"], "عندما s=0 يختار المبدّل d₀، وعندما s=1 يختار d₁. ومجموع الحدّين المفعّلين يصف هذا السلوك."],
+          ["متى تلتقط قَلّابة D ذات الحافة الصاعدة قيمة المدخل D؟", ["عند الحافة الصاعدة للساعة.", "طوال فترة المستوى العالي للساعة.", "عند الحافة الهابطة فقط.", "بمجرد تغير قيمة D."], "تلتقط قلابات D ذات الحافة الصاعدة المدخل D عند الحافة الصاعدة ثم تحتفظ بالقيمة الملتقطة."],
+          ["يبدأ عدّاد تصاعدي من بتّين عند 00 ويزيد بترديد 4. ما الحالة بعد ثلاث حواف ساعة؟", ["00", "01", "10", "11"], "تسلسل الحالات هو 00 → 01 → 10 → 11. وبعد ثلاث حواف تصبح الحالة 11.", [["عدد النبضات", "0", "1", "2", "3"], ["الحالة", "00", "01", "10", "11"]]],
+          ["أي العبارات صحيحة عن قَلّابة D؟", ["تخزّن حالة مع مرور الوقت.", "يتبع خرجها دخل D باستمرار في النوع المحفَّز بالحافة.", "قد تعتمد حالتها على حافة الساعة.", "تحتاج دائمًا إلى مدخلي ساعة."], "القلّابة عنصر تخزين يلتقط مدخله عند حافة الساعة المحددة. وهي ليست مزلاجًا شفافًا ولا تحتاج بالضرورة إلى مدخلي ساعة."],
+          ["يُفترض أن يعدّادًا تزامنيًا من بتّين يعد تصاعديًا بترديد 4. ما الخطأ في تسلسل الحالات الآتي؟", ["الحالة 11 مفقودة؛ يجب أن يمر التسلسل 00 ثم 01 ثم 10 ثم 11 ثم 00.", "لا يستطيع عدّاد من بتّين بلوغ الحالة 10.", "في العد بترديد 4 يجب الانتقال من 10 إلى 01.", "لا يجوز أن يكون العداد التزامني دوريًا."], "يوفر بتّان أربع قيم. يجب أن يمر العداد بالرموز 00 و01 و10 و11 كلها قبل العودة إلى 00."],
+          ["كم حالة مختلفة يملكها عدّاد ثنائي مثالي من 4 بتات؟", null, "توجد 2⁴ = 16 حالة ممكنة باستخدام أربعة بتات مستقلة.", "unit:states"],
+          ["ما أثر إعادة الضبط غير المتزامنة للقلّابة عادةً؟", ["تعيد الحالة بصرف النظر عن حافة الساعة التالية.", "تعمل عند الحافة الصاعدة فقط.", "تعكس الحالة المخزنة عند كل نبضة ساعة.", "تحجب مدخل البيانات نهائيًا."], "تعمل إعادة الضبط غير المتزامنة بمعزل عن الساعة؛ أما إعادة الضبط المتزامنة فلا تُقيَّم إلا عند الحافة الفعالة."],
+          ["أي مكتبة VHDL تُستخدم عادةً للنوع unsigned والعمليات الحسابية المعيارية؟", ["ieee.numeric_std", "ieee.textio", "std.env", "work.bitstream"], "توفر numeric_std النوعين unsigned وsigned والعمليات العددية المعيارية المرتبطة بهما."],
+          ["ما الصياغة الصحيحة في VHDL لاختيار قيمتين بديلتين في فرع case؟", ["تُفصل البدائل في اختيار when بالرمز | لا بكلمة or.", "يجب ربط جميع القيم في case بكلمة and.", "الخطأ هو الفاصلة المنقوطة بعد y <= '0'.", "لا تسمح VHDL بعبارة when others."], "في عبارة case تُكتب عدة بدائل لاختيار when مفصولة بخط عمودي، مثل when \"00\" | \"01\" =>."],
+          ["تقرأ عملية VHDL توافقية الإشارات a وb وsel. ما الإشارات التي يجب أن تظهر في قائمة حساسية مكتملة؟", ["a", "b", "sel", "clk فقط رغم أن العملية لا تختبر حافة."], "يجب إعادة تقييم العملية التوافقية عند تغير أي مدخل مقروء. وتشمل القائمة هنا a وb وsel."],
+          ["كم بتًا في المتجه VHDL std_logic_vector(7 downto 0)؟", null, "تشمل الفهارس من 7 إلى 0 ثمانية عناصر إجمالًا.", "unit:bits"],
+          ["ينفّذ كود VHDL التوافقي التالي y = a AND b. ما الخرج عندما a=1 وb=0؟", ["0", "1"], "لا يُخرج الكود القيمة 1 إلا عندما تكون الإشارتان 1. لذلك يكون y=0 عند a=1 وb=0.", [["a", "0", "0", "1", "1"], ["b", "0", "1", "0", "1"]]],
+          ["ما معنى إسناد VHDL q <= d داخل عملية متزامنة؟", ["يُجدول تحديث الإشارة؛ ولا تظهر القيمة الجديدة فورًا في السطر التالي كما يحدث للمتغير.", "يحدّث q حتمًا قبل تنفيذ سطر العملية التالي.", "يُسمح به للثوابت فقط.", "ينشئ تلقائيًا إعادة ضبط غير متزامنة."], "يُجدول إسناد الإشارة تحديثها لمرحلة محاكاة لاحقة، بخلاف التحديث الفوري للمتغير باستخدام :=."],
+          ["كم تركيبة دخل مختلفة يمكن أن تمثلها LUT بثلاثة بتات عنوان؟", ["6", "8", "3", "16"], "تختار بتات العنوان الثلاثة 2³ = 8 مواقع ذاكرة أو تركيبات دخل."],
+          ["أي العبارات صحيحة عن البنى المنطقية القابلة للبرمجة الشائعة؟", ["في PLA يمكن برمجة مستويي AND وOR.", "في PAL التقليدية يكون مستوى AND قابلًا للبرمجة ومستوى OR ثابت التوصيل.", "يمكن لـCPLD ربط عدة كتل منطقية قابلة للبرمجة.", "لا تستطيع LUT تنفيذ أي دالة بوليانية."], "توفر PLA مستويي AND وOR قابلين للبرمجة؛ أما PAL التقليدية فعادةً ما يكون مستوى AND فيها قابلًا للبرمجة فقط. وتربط CPLD عدة كتل قابلة للبرمجة."],
+          ["ينبغي أن يتبع خرج FPGA مصدرًا واحدًا في البداية. ما المشكلة في وصف VHDL هذا؟", ["قد يؤدي وجود مشغّلين نشطين معًا إلى تعارض أو إلى ظهور X في std_logic.", "لا تسمح VHDL إلا بإشارات اسمها y.", "تُدمج الإسنادات لتصبح بوابة AND.", "السطر الثاني مولّد ساعة صالح."], "يقود الإسنادان المتوازيان y في الوقت نفسه. وقد يُظهر حل نوع std_logic التعارض على هيئة X إذا اختلفت القيم."],
+          ["بُرمجت LUT من بتّين بالقيم y=0,1,1,0 للعناوين 00 و01 و10 و11. ما الخرج المقابل للعنوان 10؟", ["0", "1"], "في التهيئة المذكورة، تقابل القيمة الثالثة العنوان 10. وقيمة الجدول هذه هي 1.", [["العنوان", "00", "01", "10", "11"], ["خرج LUT", "0", "1", "1", "0"]]],
+          ["كم بت تهيئة تحتاج إليه LUT بسيطة ذات 4 بتات عنوان وخرج واحد؟", null, "تخزّن LUT قيمة خرج لكل عنوان من العناوين 2⁴ الممكنة، لذا تحتاج إلى 16 بت تهيئة.", "unit:bits"],
+          ["لماذا تُربط كتل FPGA المنطقية غالبًا عبر بنى توصيل قابلة للبرمجة؟", ["لتهيئة وظائف الكتل وروابطها بعد التصنيع لتناسب دوائر مختلفة.", "كي لا تحتاج FPGA إلى مصدر طاقة.", "لنقل كل الإشارات الداخلية تماثليًا.", "للاحتفاظ بالتهيئة نهائيًا دون ذاكرة."], "تتيح التوصيلات القابلة للبرمجة ربط الكتل بمرونة لتشكيل دائرة رقمية محددة. ومع ذلك تظل الطاقة وتخزين التهيئة ضروريين."],
+          ["أي عبارة تصف SRAM مقارنةً بـDRAM على نحو صحيح؟", ["لا تحتاج SRAM إلى تحديث دوري للذاكرة، لكن كثافتها أقل عادةً.", "SRAM متطايرة ويجب تحديث كل صف فيها.", "تخزن DRAM البيانات دائمًا بلا طاقة.", "تتكون SRAM من مكثفات فقط."], "تحفظ SRAM الحالة في دارة ثنائية الاستقرار ولا تحتاج إلى دورات تحديث. أما DRAM فتخزن الشحنة وتحتاج إلى تحديث دوري؛ وتستهلك SRAM عادةً مساحة أكبر لكل بت."],
+          ["أي العبارات صحيحة عن DRAM؟", ["يجب تحديث حالة الشحنة المخزنة دوريًا.", "تكون DRAM متطايرة عادةً.", "قد تتكون خلية DRAM عادةً من ترانزستور ومكثف.", "لا تحتاج DRAM مطلقًا إلى طاقة للحفاظ على البيانات."], "تخزن DRAM البت عادةً كشحنة في مكثف يجب تحديثه بانتظام. وتُفقد البيانات عند انقطاع الطاقة."],
+          ["نُظمت ذاكرة على شكل 4 Ki × 8 بت. ما سعتها بالبايت؟", null, "4 Ki تساوي 4 × 1024 كلمة ذاكرة. ومع 8 بت، أي بايت واحد لكل كلمة، تكون السعة 4096 بايت.", "unit:bytes"],
+          ["تحتوي شريحة على 10 خطوط عنوان مستقلة. ما العبارة الصحيحة عن عدد مواقع الذاكرة القابلة للعنونة؟", ["يوجد 2¹⁰ = 1024 موقعًا؛ ولا يمكن معرفة عرض البيانات من ذلك وحده.", "يوجد 10 مواقع فقط و10 بتات بيانات.", "يوجد 20 موقعًا.", "يعنون كل خط عنوان موقعًا واحدًا بالضبط."], "ترمّز عشرة بتات عنوان مستقلة 2¹⁰ عنوانًا مختلفًا. ويحدّد عدد بتات كل كلمة خطوط البيانات لا خطوط العنوان."],
+          ["تحتوي ذاكرة على 12 خط عنوان وهي منظمة بالكلمات. كم عنوانًا مختلفًا يمكن تكوينه؟", ["1024", "2048", "4096"], "تتيح 12 بتة عنوان تكوين 2¹² = 4096 عنوانًا مختلفًا.", [["بتات العنوان", "10", "11", "12"], ["العناوين", "1024", "2048", "4096"]]],
+          ["لماذا يستهلك عاكس CMOS الساكن طاقة سكون قليلة جدًا مثاليًا في حالة منطقية مستقرة؟", ["في الحالة المثالية يوصل أحد مساري الترانزستور فقط، ولا يوجد مسار دائم مباشر من التغذية إلى الأرضي.", "يكون ترانزستورا MOS موصلين بالكامل معًا دائمًا.", "تعمل مكوّنات CMOS دون جهد تغذية.", "يُعزل الخرج بمكثف عند كل حالة منطقية."], "في العاكس المستقر يوصل ترانزستور pMOS أو nMOS مثاليًا، لا مسار قصر دائم بين التغذية والأرضي. ومع ذلك تستهلك التحولات وتيارات التسرب الفعلية طاقة."],
+          ["يستخدم محول ADC أحادي القطب مثالي ذو 8 بتات Vref=2,56 V و256 فترة متساوية. ما عرض الفترة؟", null, "عرض الفترة يساوي Vref/2⁸ = 2,56 V/256 = 0,01 V.", "unit:v"],
+          ["ما أقل تردد أخذ عينات يفرضه معيار نايكويست لإشارة محدودة النطاق يبلغ أعلى تردد فيها 4 kHz؟", ["8 kHz", "4 kHz", "2 kHz", "16 kHz"], "يجب ألا يقل تردد أخذ العينات عن ضعف أعلى تردد للإشارة: 2 × 4 kHz = 8 kHz. وتظل المرشحات والهامش عن الحد مهمين عمليًا."],
+          ["أي الإجراءات أو العبارات مناسبة عند التحويل من تماثلي إلى رقمي؟", ["يحد مرشح منع الطيّ التماثلي الترددات قبل أخذ العينات.", "تتيح بتات تكميم أكثر فترات أدق عند المجال نفسه.", "يمكن أن يقل تردد أخذ العينات عن ضعف أعلى تردد بلا خطر الطيّ.", "يربط التكميم قيمة القياس برمز رقمي متقطع."], "يحد المرشح المسبق الطيف، وتزيد البتات عدد مستويات التكميم. ويربط التكميم القياس المستمر برمز متقطع."],
+          ["لدى ADC مثالي من 3 بتات جهد مرجعي Vref=8 V وثماني فترات متساوية، ويُقرّب صراحةً إلى الأسفل ضمن الفترة. ما الرمز عند 5,2 V؟", ["100", "101", "110", "111"], "عرض كل فترة 8 V/8 = 1 V. تقع 5,2 V ضمن الفترة 5–6 V، ورمزها وفق قاعدة التقريب المذكورة هو 101.", [["مجال الدخل (V)", "0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7–8"], ["الرمز", "000", "001", "010", "011", "100", "101", "110", "111"]]],
+          ["في محول DAC مثالي من نوع R-2R ذي 4 بتات، البت b₃ هو الأعلى قيمة. ما الخطأ في الترجيح الآتي؟", ["الأوزان معكوسة؛ فـb₃ هو الأعلى قيمة وينبغي أن يملك الوزن الأكبر.", "لا تستطيع شبكات R-2R التعامل مع بتات رقمية.", "يجب أن يكون وزن كل البتات متساويًا دائمًا في DAC مثالي.", "لا يجوز أن يبدّل مقاومة إلا البت الأقل قيمة."], "في محول DAC ذي الترجيح الثنائي المعتاد يحدد البت الأعلى قيمة الجزء الأكبر من الخرج. والأوزان المثالية لأربعة بتات تتناسب مع 1/2 و1/4 و1/8 و1/16.", null, "المقصود: وزن b₃ هو 1/16 Vref ووزن b₀ هو 1/2 Vref."],
+          ["ما المقصود بخطوة التكميم في محول مثالي ذي مستويات منتظمة؟", ["المسافة بين قيمتي سعة متجاورتين يمكن تمثيلهما.", "الزمن بين عينتين متتاليتين.", "أقصى معدل بتات للخرج.", "عدد المداخل التماثلية."], "خطوة التكميم هي المسافة بين مستويين متقطعين متجاورين. ولـN بتات ومجال أحادي القطب Vref، تكون الخطوة المثالية عادةً Vref/2ᴺ."]
+        ]
+      };
+      ui.de = {
+        score: "Punktestand", allTopics: "Alle sieben Themen", mixed: "Gemischt", privacy: "Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.",
+        examSetup: "10 Fragen · 10 Minuten · nicht pausierbar. Bei weniger als 10 passenden Fragen werden Fragen wiederholt.",
+        noQuestions: "Für diese Auswahl sind keine Fragen vorhanden. Bitte ändere Themenfeld oder Niveau.",
+        exam: "PRÜFUNG", dailyRound: "FRAGE DES TAGES", training: "TRAINING", question: "FRAGE", next: "Weiter →", result: "Ergebnis →",
+        submitExam: "Antwort abgeben →", submitLast: "Letzte Antwort abgeben →", elapsed: "Verstrichene Zeit", remaining: "Verbleibende Zeit",
+        labels: {
+          multi: "Mehrfachauswahl · Nur alle richtigen und keine falschen Antworten ergeben einen Punkt.", numeric: "Zahlenwert", unit: "Einheit", tolerance: "Toleranz",
+          truth: "Ausgang aus der Tabelle ableiten · Eine Antwort wählen.", debug: "Fehlerdiagnose · Eine Antwort wählen.", single: "Einfachauswahl · Eine Antwort wählen.",
+          answerNumber: "Antwort als Zahlenwert", answerChoices: "Antwortmöglichkeiten", multipleChoices: "Mehrfachauswahl", truthTable: "Wahrheitstabelle", code: "Codebeispiel",
+          invalidNumber: "Bitte gib einen gültigen Zahlenwert ein.", choose: "Wähle mindestens eine Antwort aus.", correct: "Richtig.", incorrect: "Noch nicht ganz.",
+          resultTitleExpired: "Die Zeit ist um.", resultTitleExam: "Prüfungsrunde abgeschlossen.", resultTitleDaily: "Tagesfrage gelöst.", resultTitleRound: "Runde abgeschlossen.",
+          resultExam: "DEIN ERGEBNIS", resultTraining: "DEIN TRAININGSSTAND", rightAnswers: "von", rightQuestions: "von", timeTaken: "Bearbeitungszeit",
+          automatic: " Die Runde wurde nach Ablauf der 10 Minuten automatisch abgegeben.", answersNow: " Deine Antworten und Erklärungen erscheinen erst jetzt.",
+          strong: "Stark — das sitzt.", foundation: "Eine gute Grundlage für die nächste Runde.", localResult: "Dein Ergebnis bleibt nur hier auf der Seite.",
+          review: "Ergebnis und Lösungen", right: "Richtig", wrong: "Nicht richtig", retry: "Neue Runde konfigurieren ↻"
+        }
+      };
+      let locale = "de";
+      const staticSelectors = {
+        "fr": {
+          "#skip-link": ["skip", "text"], ".brand": ["brand", "aria-label"], ".nav": ["nav", "aria-label"], "#nav-topics": ["topicsNav", "text"], "#nav-start": ["startNav", "html"],
+          ".hero .eyebrow": ["heroEyebrow", "text"], "#hero-title": ["heroTitle", "html"], ".hero-copy": ["heroCopy", "text"], ".hero-links .button": ["configure", "html"], ".hero-links .text-link": ["discover", "text"], ".hero-note": ["heroNote", "html"],
+          "#challenge": ["console", "aria-label"], ".console-top > span": ["consoleTag", "html"], ".console-top strong": ["questionCount", "text"],
+          ".panel-kicker": ["panelKicker", "text"], ".panel-title": ["panelTitle", "text"], ".panel-intro": ["panelIntro", "text"],
+          ".field-label[for='category-select']": ["category", "first"], ".field-label[for='difficulty-select']": ["difficulty", "first"],
+          ".mode-option:nth-child(1) strong": ["practice", "text"], ".mode-option:nth-child(1) small": ["practiceNote", "text"],
+          ".mode-option:nth-child(2) strong": ["exam", "text"], ".mode-option:nth-child(2) small": ["examNote", "text"],
+          ".mode-option:nth-child(3) strong": ["daily", "text"], ".mode-option:nth-child(3) small": ["dailyNote", "text"],
+          "#setup-note": ["privacy", "text"], "#start-button": ["start", "html"], ".topics-line": ["formats", "aria-label"],
+          ".topic-tag:nth-child(1)": ["single", "text"], ".topic-tag:nth-child(2)": ["multi", "text"], ".topic-tag:nth-child(3)": ["numeric", "text"], ".topic-tag:nth-child(4)": ["truth", "text"], ".topic-tag:nth-child(5)": ["debug", "text"],
+          "#submit-answer": ["submit", "text"], "#next-question": ["next", "text"], "#end-round": ["endRound", "text"],
+          "#exam-warning": ["examWarning", "text"], "#confirm-end span": ["confirm", "text"], "#confirm-finish": ["confirmFinish", "text"], "#cancel-finish": ["back", "text"],
+          ".section-heading .eyebrow": ["topicsEyebrow", "text"], "#topics-title": ["topicsTitle", "html"], ".section-heading > p": ["topicsIntro", "text"],
+          ".topic:nth-child(1) .topic-no": ["topicTag1", "text"], ".topic:nth-child(2) .topic-no": ["topicTag2", "text"], ".topic:nth-child(3) .topic-no": ["topicTag3", "text"],
+          ".topic:nth-child(4) .topic-no": ["topicTag4", "text"], ".topic:nth-child(5) .topic-no": ["topicTag5", "text"], ".topic:nth-child(6) .topic-no": ["topicTag6", "text"], ".topic:nth-child(7) .topic-no": ["topicTag7", "text"],
+          ".topic:nth-child(1) h3": ["topic1", "text"], ".topic:nth-child(1) p": ["topic1d", "text"], ".topic:nth-child(2) h3": ["topic2", "text"], ".topic:nth-child(2) p": ["topic2d", "text"],
+          ".topic:nth-child(3) h3": ["topic3", "text"], ".topic:nth-child(3) p": ["topic3d", "text"], ".topic:nth-child(4) h3": ["topic4", "text"], ".topic:nth-child(4) p": ["topic4d", "text"],
+          ".topic:nth-child(5) h3": ["topic5", "text"], ".topic:nth-child(5) p": ["topic5d", "text"], ".topic:nth-child(6) h3": ["topic6", "text"], ".topic:nth-child(6) p": ["topic6d", "text"],
+          ".topic:nth-child(7) h3": ["topic7", "text"], ".topic:nth-child(7) p": ["topic7d", "text"], ".footer-note": ["footer", "text"]
+        }
+      };
+      staticSelectors.ar = {
+        "#skip-link": ["skip", "text"], ".brand": ["brand", "aria-label"], ".nav": ["nav", "aria-label"], "#nav-topics": ["topicsNav", "text"], "#nav-start": ["startNav", "html"],
+        ".hero .eyebrow": ["heroEyebrow", "text"], "#hero-title": ["heroTitle", "html"], ".hero-copy": ["heroCopy", "text"], ".hero-links .button": ["configure", "html"], ".hero-links .text-link": ["discover", "text"], ".hero-note": ["heroNote", "html"],
+        "#challenge": ["console", "aria-label"], ".console-top > span": ["consoleTag", "html"], ".console-top strong": ["questionCount", "text"],
+        ".panel-kicker": ["panelKicker", "text"], ".panel-title": ["panelTitle", "text"], ".panel-intro": ["panelIntro", "text"],
+        ".field-label[for='category-select']": ["category", "first"], ".field-label[for='difficulty-select']": ["difficulty", "first"],
+        ".mode-option:nth-child(1) strong": ["practice", "text"], ".mode-option:nth-child(1) small": ["practiceNote", "text"],
+        ".mode-option:nth-child(2) strong": ["exam", "text"], ".mode-option:nth-child(2) small": ["examNote", "text"],
+        ".mode-option:nth-child(3) strong": ["daily", "text"], ".mode-option:nth-child(3) small": ["dailyNote", "text"],
+        "#setup-note": ["privacy", "text"], "#start-button": ["start", "html"], ".topics-line": ["formats", "aria-label"],
+        ".topic-tag:nth-child(1)": ["single", "text"], ".topic-tag:nth-child(2)": ["multi", "text"], ".topic-tag:nth-child(3)": ["numeric", "text"], ".topic-tag:nth-child(4)": ["truth", "text"], ".topic-tag:nth-child(5)": ["debug", "text"],
+        "#submit-answer": ["submit", "text"], "#next-question": ["next", "text"], "#end-round": ["endRound", "text"],
+        "#exam-warning": ["examWarning", "text"], "#confirm-end span": ["confirm", "text"], "#confirm-finish": ["confirmFinish", "text"], "#cancel-finish": ["back", "text"],
+        ".section-heading .eyebrow": ["topicsEyebrow", "text"], "#topics-title": ["topicsTitle", "html"], ".section-heading > p": ["topicsIntro", "text"],
+        ".topic:nth-child(1) .topic-no": ["topicTag1", "text"], ".topic:nth-child(2) .topic-no": ["topicTag2", "text"], ".topic:nth-child(3) .topic-no": ["topicTag3", "text"],
+        ".topic:nth-child(4) .topic-no": ["topicTag4", "text"], ".topic:nth-child(5) .topic-no": ["topicTag5", "text"], ".topic:nth-child(6) .topic-no": ["topicTag6", "text"], ".topic:nth-child(7) .topic-no": ["topicTag7", "text"],
+        ".topic:nth-child(1) h3": ["topic1", "text"], ".topic:nth-child(1) p": ["topic1d", "text"], ".topic:nth-child(2) h3": ["topic2", "text"], ".topic:nth-child(2) p": ["topic2d", "text"],
+        ".topic:nth-child(3) h3": ["topic3", "text"], ".topic:nth-child(3) p": ["topic3d", "text"], ".topic:nth-child(4) h3": ["topic4", "text"], ".topic:nth-child(4) p": ["topic4d", "text"],
+        ".topic:nth-child(5) h3": ["topic5", "text"], ".topic:nth-child(5) p": ["topic5d", "text"], ".topic:nth-child(6) h3": ["topic6", "text"], ".topic:nth-child(6) p": ["topic6d", "text"],
+        ".topic:nth-child(7) h3": ["topic7", "text"], ".topic:nth-child(7) p": ["topic7d", "text"], ".footer-note": ["footer", "text"]
+      };
+      const staticOriginals = new Map();
+      Object.values(staticSelectors).forEach(map => Object.keys(map).forEach(selector => {
+        const element = document.querySelector(selector);
+        if (element && !staticOriginals.has(selector)) staticOriginals.set(selector, { text: element.textContent, html: element.innerHTML, aria: element.getAttribute("aria-label"), firstText: element.firstChild?.nodeValue });
+      }));
+      function t(key, values = {}) {
+        const pack = ui[locale] || {};
+        let value = pack[key] || pack.labels?.[key] || key;
+        Object.entries(values).forEach(([name, replacement]) => { value = value.replaceAll(`{${name}}`, replacement); });
+        return value;
+      }
+      function translatedQuestion(question) {
+        const index = questions.indexOf(question);
+        const local = (questionTranslations[locale] || [])[index];
+        if (!local) return question;
+        const result = { ...question, prompt: local[0], explain: local[2] };
+        if (local[1]) result.choices = local[1];
+        if (Array.isArray(local[3])) result.rows = local[3];
+        if (local[4]) result.snippet = local[4];
+        if (typeof local[3] === "string" && local[3].startsWith("unit:")) {
+          const key = local[3].slice(5);
+          result.unit = locale === "fr" ? ({ outputs: "sorties", states: "états", bits: "bits", bytes: "octets", v: "V" }[key] || "") :
+            ({ outputs: "مخارج", states: "حالات", bits: "بتات", bytes: "بايت", v: "V" }[key] || "");
+        } else if (locale === "fr" && result.unit) result.unit = ({ Bits: "bits", Byte: "octets", V: "V", "Ausgänge": "sorties", "Zustände": "états" }[result.unit] || result.unit);
+        else if (locale === "ar" && result.unit) result.unit = ({ Bits: "بتات", Byte: "بايت", V: "V", "Ausgänge": "مخارج", "Zustände": "حالات" }[result.unit] || result.unit);
+        return result;
+      }
+      function updateSetupOptions() {
+        const categorySelect = document.getElementById("category-select");
+        const selectedCategory = categorySelect.value || "all";
+        categorySelect.replaceChildren(new Option(ui[locale]?.allTopics || "Alle sieben Themen", "all"));
+        categories.forEach((category, index) => categorySelect.add(new Option(`${String(index + 1).padStart(2, "0")} · ${categoryNames[locale][index]}`, category)));
+        categorySelect.value = selectedCategory;
+        const difficultySelect = document.getElementById("difficulty-select");
+        const selectedDifficulty = difficultySelect.value || "all";
+        difficultySelect.options[0].textContent = ui[locale]?.mixed || "Gemischt";
+        ["easy", "medium", "hard"].forEach((key, i) => { difficultySelect.options[i + 1].textContent = difficultyNamesByLocale[locale][key]; });
+        difficultySelect.value = selectedDifficulty;
+      }
+      function applyLocale(nextLocale, persist = true) {
+        locale = ["de", "fr", "ar"].includes(nextLocale) ? nextLocale : "de";
+        document.documentElement.lang = locale === "ar" ? "ar" : locale === "fr" ? "fr" : "de";
+        document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+        document.title = locale === "fr" ? "Bit für Bit — Le défi de technologie numérique" : locale === "ar" ? "بتًّا بتًّا — تحدي التقنية الرقمية" : "Bit für Bit — Die Digitaltechnik-Challenge";
+        document.getElementById("meta-description").content = locale === "fr" ? "Comprenez la technologie numérique, entraînez-vous et relevez un défi équitable." : locale === "ar" ? "افهم التقنية الرقمية وتدرّب واختبر نفسك في تحدٍ عادل." : "Digitaltechnik verstehen, gezielt trainieren und dich in einer fairen Prüfungsrunde herausfordern.";
+        document.getElementById("language-label").textContent = ui[locale]?.language || "Sprache";
+        document.querySelector(".mode-list").setAttribute("aria-label", locale === "fr" ? "Mode de la manche" : locale === "ar" ? "نمط الجولة" : "Rundenmodus");
+        document.getElementById("round-progress").setAttribute("aria-label", ui[locale]?.roundProgress || "Rundenfortschritt");
+        document.getElementById("timer").setAttribute("aria-label", mode === "exam" ? t("remaining") : t("elapsed"));
+        document.querySelectorAll("#language-select option").forEach(option => { option.lang = option.value; });
+        const map = staticSelectors[locale];
+        for (const [selector, saved] of staticOriginals) {
+          const element = document.querySelector(selector);
+          if (!element) continue;
+          if (locale === "de") {
+            const originalProperty = staticSelectors.fr?.[selector]?.[1] || staticSelectors.ar?.[selector]?.[1] || "text";
+            if (originalProperty === "first") {
+              element.firstChild.nodeValue = saved.firstText;
+            } else if (originalProperty === "aria-label") {
+              if (saved.aria) element.setAttribute("aria-label", saved.aria);
+              else element.removeAttribute("aria-label");
+            } else if (originalProperty === "html") {
+              element.innerHTML = saved.html;
+            } else {
+              element.textContent = saved.text;
+            }
+          } else if (map && map[selector]) {
+            const [key, property] = map[selector], translation = ui[locale][key];
+            if (property === "aria-label") element.setAttribute(property, translation);
+            else if (property === "html") element.innerHTML = translation + (selector === ".hero-links .button" ? ' <span aria-hidden="true">→</span>' : selector === "#nav-start" ? ' <span aria-hidden="true">↗</span>' : selector === "#start-button" ? ' <span aria-hidden="true">→</span>' : "");
+            else if (property === "first") element.firstChild.textContent = translation;
+            else element.textContent = translation;
+          }
+        }
+        updateSetupOptions();
+        document.getElementById("language-select").value = locale;
+        if (persist) try { localStorage.setItem("bitfurbit-language", locale); } catch {}
+        if (!setup.hidden) {
+          const isExam = document.querySelector('input[name="mode"]:checked').value === "exam";
+          document.getElementById("setup-note").textContent = isExam ? t("examSetup") : t("privacy");
+        }
+        if (!play.hidden) renderQuestion(true);
+        if (!results.hidden) finishRound(lastExpired, true);
+      }
       const categoriesSelect = document.getElementById("category-select");
       categories.forEach((category, index) => {
         const option = document.createElement("option");
@@ -396,6 +710,10 @@
       let deadline = 0;
       let startedAt = 0;
       let examRecords = [];
+      let lastExpired = false;
+      let lastFeedbackCorrect = null;
+      let lastValidationKey = "";
+      let finishedElapsedSeconds = 0;
 
       function validateQuestionBank() {
         const supported = new Set(["single", "multi", "numeric", "truth", "debug"]);
@@ -409,6 +727,16 @@
           if (q.type === "truth" && !Array.isArray(q.rows)) throw new Error(`Missing truth table at ${i}`);
           if (q.type === "debug" && !q.snippet) throw new Error(`Missing code sample at ${i}`);
         });
+        if (questions.length !== 42) throw new Error("Expected 42 questions.");
+        for (const lang of ["fr", "ar"]) {
+          const localized = questionTranslations[lang];
+          if (!localized || localized.length !== questions.length) throw new Error(`Incomplete ${lang} question bank.`);
+          localized.forEach((entry, i) => {
+            if (!entry[0] || !entry[2]) throw new Error(`Missing ${lang} prompt or explanation at ${i + 1}.`);
+            if (questions[i].choices && (!entry[1] || entry[1].length !== questions[i].choices.length)) throw new Error(`Incomplete ${lang} choices at ${i + 1}.`);
+            if (questions[i].type === "truth" && !Array.isArray(entry[3])) throw new Error(`Incomplete ${lang} table at ${i + 1}.`);
+          });
+        }
       }
 
       function shuffle(items) {
@@ -434,7 +762,7 @@
         mode = document.querySelector('input[name="mode"]:checked').value;
         const pool = questions.filter(q => (category === "all" || q.category === category) && (difficulty === "all" || q.difficulty === difficulty));
         if (!pool.length) {
-          document.getElementById("setup-note").textContent = "Für diese Auswahl sind keine Fragen vorhanden. Bitte ändere Themenfeld oder Niveau.";
+          document.getElementById("setup-note").textContent = t("noQuestions");
           return;
         }
         if (mode === "daily") round = [getDailyQuestion(pool)];
@@ -446,19 +774,19 @@
             round = shuffle(expanded);
           }
         }
-        index = 0; score = 0; locked = false; earned = new Set(); selections = []; examRecords = [];
+        index = 0; score = 0; locked = false; earned = new Set(); selections = []; examRecords = []; finishedElapsedSeconds = 0; lastExpired = false;
         setup.hidden = true; results.hidden = true; play.hidden = false;
         const exam = mode === "exam";
         warning.hidden = !exam; endButton.hidden = !exam;
-        document.getElementById("setup-note").textContent = "Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.";
+        document.getElementById("setup-note").textContent = t("privateNote");
         if (timerId) window.clearInterval(timerId);
         startedAt = Date.now();
         if (exam) {
           deadline = startedAt + 10 * 60 * 1000;
-          timer.setAttribute("aria-label", "Verbleibende Zeit");
+          timer.setAttribute("aria-label", t("remaining"));
         } else {
           timer.classList.remove("urgent");
-          timer.setAttribute("aria-label", "Verstrichene Zeit");
+          timer.setAttribute("aria-label", t("elapsed"));
         }
         updateTimer();
         timerId = window.setInterval(updateTimer, 250);
@@ -486,7 +814,13 @@
       function renderTable(rows) {
         const table = document.createElement("table");
         table.className = "truth-table";
-        table.setAttribute("aria-label", "Wahrheitstabelle");
+        table.setAttribute("aria-label", ui[locale]?.labels.truthTable || "Wahrheitstabelle");
+        table.dir = locale === "ar" ? "rtl" : "ltr";
+        const wrapper = document.createElement("div");
+        wrapper.className = "table-wrap";
+        wrapper.setAttribute("role", "region");
+        wrapper.setAttribute("tabindex", "0");
+        wrapper.setAttribute("aria-label", ui[locale]?.labels.truthTable || "Wahrheitstabelle");
         const body = document.createElement("tbody");
         rows.forEach((row, rowIndex) => {
           const tr = document.createElement("tr");
@@ -494,30 +828,44 @@
             const cell = document.createElement(rowIndex === 0 ? "th" : "td");
             if (rowIndex === 0 && colIndex === 0) cell.scope = "col";
             cell.textContent = value;
+            cell.dir = "auto";
             tr.append(cell);
           });
           body.append(tr);
         });
         table.append(body);
-        return table;
+        wrapper.append(table);
+        return wrapper;
       }
 
-      function renderQuestion() {
-        const q = round[index];
-        locked = false;
-        selections = [];
+      function renderQuestion(preserve = false) {
+        const previousSelection = preserve ? [...selections] : [];
+        const previousNumber = preserve ? document.getElementById("numeric-answer")?.value : "";
+        const previousLocked = preserve && locked;
+        const previousFeedback = preserve ? feedback.textContent : "";
+        const previousFeedbackClass = preserve ? feedback.className : "answer-feedback";
+        const q = translatedQuestion(round[index]);
+        if (!preserve) {
+          lastFeedbackCorrect = null;
+          lastValidationKey = "";
+        }
+        locked = previousLocked;
+        selections = previousSelection;
         questionTitle.textContent = q.prompt;
-        questionMeta.textContent = `${q.category} · ${difficultyNames[q.difficulty]}`;
-        questionNote.textContent = q.type === "multi" ? "Mehrfachauswahl · Nur alle richtigen und keine falschen Antworten ergeben einen Punkt." :
-          q.type === "numeric" ? `Zahlenwert${q.unit ? ` · Einheit: ${q.unit}` : ""} · Toleranz ±${q.tolerance}${q.unit ? ` ${q.unit}` : ""}` :
-          q.type === "truth" ? "Ausgang aus der Tabelle ableiten · Eine Antwort wählen." :
-          q.type === "debug" ? "Fehlerdiagnose · Eine Antwort wählen." : "Einfachauswahl · Eine Antwort wählen.";
+        questionTitle.dir = "auto";
+        const categoryIndex = categories.indexOf(round[index].category);
+        const labels = ui[locale]?.labels || { multi: "Mehrfachauswahl · Nur alle richtigen und keine falschen Antworten ergeben einen Punkt.", numeric: "Zahlenwert", unit: "Einheit", tolerance: "Toleranz", truth: "Ausgang aus der Tabelle ableiten · Eine Antwort wählen.", debug: "Fehlerdiagnose · Eine Antwort wählen.", single: "Einfachauswahl · Eine Antwort wählen." };
+        questionMeta.textContent = `${categoryNames[locale][categoryIndex]} · ${difficultyNamesByLocale[locale][q.difficulty]}`;
+        questionNote.textContent = q.type === "multi" ? labels.multi :
+          q.type === "numeric" ? `${labels.numeric}${q.unit ? ` · ${labels.unit}: ${q.unit}` : ""} · ${labels.tolerance} ±${q.tolerance}${q.unit ? ` ${q.unit}` : ""}` :
+          q.type === "truth" ? labels.truth : q.type === "debug" ? labels.debug : labels.single;
         questionExtra.replaceChildren();
         if (q.type === "truth") questionExtra.append(renderTable(q.rows));
         if (q.type === "debug") {
           const code = document.createElement("pre");
           code.className = "code-sample";
-          code.setAttribute("aria-label", "Codebeispiel");
+          code.setAttribute("aria-label", labels.code || (locale === "fr" ? "Exemple de code" : locale === "ar" ? "مثال برمجي" : "Codebeispiel"));
+          code.dir = "ltr";
           code.textContent = q.snippet;
           questionExtra.append(code);
         }
@@ -531,18 +879,21 @@
           input.type = "text";
           input.inputMode = "decimal";
           input.autocomplete = "off";
-          input.setAttribute("aria-label", `Antwort als Zahlenwert${q.unit ? ` in ${q.unit}` : ""}`);
-          input.placeholder = "Deine Antwort";
+          input.setAttribute("aria-label", `${labels.answerNumber || (locale === "fr" ? "Réponse numérique" : locale === "ar" ? "الإجابة كقيمة رقمية" : "Antwort als Zahlenwert")}${q.unit ? ` ${q.unit}` : ""}`);
+          input.placeholder = locale === "fr" ? "Votre réponse" : locale === "ar" ? "إجابتك" : "Deine Antwort";
+          input.dir = "ltr";
+          input.value = previousNumber || "";
+          input.disabled = previousLocked;
           const unit = document.createElement("span");
           unit.className = "unit";
-          unit.textContent = q.unit || "Wert";
+          unit.textContent = q.unit || (locale === "fr" ? "Valeur" : locale === "ar" ? "قيمة" : "Wert");
           wrap.append(input, unit);
           answerArea.append(wrap);
         } else {
           const group = document.createElement("div");
           group.className = "answer-options";
           group.setAttribute("role", "group");
-          group.setAttribute("aria-label", q.type === "multi" ? "Mehrfachauswahl" : "Antwortmöglichkeiten");
+          group.setAttribute("aria-label", q.type === "multi" ? (labels.multipleChoices || "Mehrfachauswahl") : (labels.answerChoices || "Antwortmöglichkeiten"));
           q.choices.forEach((choice, choiceIndex) => {
             const label = document.createElement("label");
             label.className = "answer-option";
@@ -550,6 +901,8 @@
             input.type = q.type === "multi" ? "checkbox" : "radio";
             input.name = "answer";
             input.value = String(choiceIndex);
+            input.checked = previousSelection.includes(choiceIndex);
+            input.disabled = previousLocked;
             input.addEventListener("change", () => {
               if (q.type === "multi") {
                 selections = [...group.querySelectorAll("input:checked")].map(el => Number(el.value));
@@ -558,6 +911,7 @@
             });
             const text = document.createElement("span");
             text.textContent = choice;
+            text.dir = "auto";
             label.append(input, text);
             group.append(label);
           });
@@ -565,19 +919,23 @@
         }
         const exam = mode === "exam";
         liveScore.hidden = exam;
-        liveScore.textContent = `Punktestand ${score} von ${round.length}`;
-        roundLabel.textContent = `${exam ? "PRÜFUNG" : mode === "daily" ? "FRAGE DES TAGES" : "TRAINING"} · FRAGE ${String(index + 1).padStart(2, "0")} / ${String(round.length).padStart(2, "0")}`;
+        liveScore.textContent = `${ui[locale]?.score || "Punktestand"} ${score} / ${round.length}`;
+        roundLabel.textContent = `${mode === "exam" ? t("exam") : mode === "daily" ? t("dailyRound") : t("training")} · ${t("question")} ${String(index + 1).padStart(2, "0")} / ${String(round.length).padStart(2, "0")}`;
         progress.setAttribute("aria-valuemax", String(round.length));
         progress.setAttribute("aria-valuenow", String(index));
         progressFill.style.width = `${(index / round.length) * 100}%`;
-        feedback.textContent = "";
-        feedback.className = "answer-feedback";
+        feedback.textContent = preserve && lastValidationKey ? labels[lastValidationKey] :
+          preserve && previousFeedback && lastFeedbackCorrect !== null ?
+            `${lastFeedbackCorrect ? labels.correct : labels.incorrect} ${q.explain}${lastFeedbackCorrect ? "" : ` ${locale === "fr" ? "Modifiez votre réponse et réessayez." : locale === "ar" ? "عدّل إجابتك وحاول مرة أخرى." : "Passe deine Antwort an und versuche es erneut."}`}` :
+            preserve ? previousFeedback : "";
+        feedback.className = preserve ? previousFeedbackClass : "answer-feedback";
         submitButton.hidden = exam;
         submitButton.disabled = q.type !== "numeric";
         nextButton.disabled = !exam;
-        nextButton.textContent = exam ? (index === round.length - 1 ? "Letzte Antwort abgeben →" : "Antwort abgeben →") : index === round.length - 1 ? "Ergebnis →" : "Weiter →";
+        nextButton.textContent = exam ? (index === round.length - 1 ? t("submitLast") : t("submitExam")) : index === round.length - 1 ? t("result") : t("next");
         document.getElementById("confirm-end").hidden = true;
-        questionTitle.focus({ preventScroll: true });
+        submitButton.disabled = preserve && previousLocked ? true : q.type !== "numeric" && !previousSelection.length;
+        if (!preserve) questionTitle.focus({ preventScroll: true });
       }
 
       function getSubmittedValue(q) {
@@ -608,27 +966,30 @@
 
       function submitPractice() {
         if (locked) return;
-        const q = round[index];
+        const q = translatedQuestion(round[index]);
         const response = getSubmittedValue(q);
         if (!response.valid) {
-          feedback.textContent = q.type === "numeric" ? "Bitte gib einen gültigen Zahlenwert ein." : "Wähle mindestens eine Antwort aus.";
+          lastValidationKey = q.type === "numeric" ? "invalidNumber" : "choose";
+          feedback.textContent = t("labels")[lastValidationKey];
           feedback.className = "answer-feedback bad";
           return;
         }
         const correct = isCorrect(q, response.value);
+        lastValidationKey = "";
+        lastFeedbackCorrect = correct;
         markAnswer(q, response.value, correct);
         if (correct) {
           if (!earned.has(index)) score++;
           earned.add(index);
-          liveScore.textContent = `Punktestand ${score} von ${round.length}`;
+          liveScore.textContent = `${ui[locale]?.score || "Punktestand"} ${score} / ${round.length}`;
           locked = true;
-          feedback.textContent = `Richtig. ${q.explain}`;
+          feedback.textContent = `${t("labels").correct} ${q.explain}`;
           feedback.className = "answer-feedback good";
           answerArea.querySelectorAll("input").forEach(input => input.disabled = true);
           nextButton.disabled = false;
           submitButton.disabled = true;
         } else {
-          feedback.textContent = `Noch nicht ganz. ${q.explain} Passe deine Antwort an und versuche es erneut.`;
+          feedback.textContent = `${t("labels").incorrect} ${q.explain} ${locale === "fr" ? "Modifiez votre réponse et réessayez." : locale === "ar" ? "عدّل إجابتك وحاول مرة أخرى." : "Passe deine Antwort an und versuche es erneut."}`;
           feedback.className = "answer-feedback bad";
           if (q.type === "numeric") {
             const input = document.getElementById("numeric-answer");
@@ -655,9 +1016,11 @@
         renderQuestion();
       }
 
-      function finishRound(expired) {
-        if (play.hidden || results.hidden === false) return;
-        const elapsedSeconds = Math.floor(Math.max(0, Date.now() - startedAt) / 1000);
+      function finishRound(expired, force = false) {
+        if ((!force && (play.hidden || results.hidden === false))) return;
+        lastExpired = expired;
+        const elapsedSeconds = force ? finishedElapsedSeconds : Math.floor(Math.max(0, Date.now() - startedAt) / 1000);
+        if (!force) finishedElapsedSeconds = elapsedSeconds;
         const elapsedText = formatDuration(elapsedSeconds);
         if (timerId) {
           window.clearInterval(timerId);
@@ -674,29 +1037,31 @@
         const title = document.createElement("h2");
         title.className = "panel-title";
         title.id = "result-title";
-        title.textContent = expired ? "Die Zeit ist um." : mode === "exam" ? "Prüfungsrunde abgeschlossen." : mode === "daily" ? "Tagesfrage gelöst." : "Runde abgeschlossen.";
+        title.textContent = expired ? t("labels").resultTitleExpired : mode === "exam" ? t("labels").resultTitleExam : mode === "daily" ? t("labels").resultTitleDaily : t("labels").resultTitleRound;
         const kicker = document.createElement("p");
         kicker.className = "panel-kicker";
-        kicker.textContent = mode === "exam" ? "DEIN ERGEBNIS" : "DEIN TRAININGSSTAND";
+        kicker.textContent = mode === "exam" ? t("labels").resultExam : t("labels").resultTraining;
         const scoreEl = document.createElement("strong");
         scoreEl.className = "result-score";
         scoreEl.textContent = `${score} / ${round.length}`;
         const copy = document.createElement("p");
         copy.className = "result-copy";
-        copy.textContent = mode === "exam" ? `${score} von ${round.length} Antworten richtig. Bearbeitungszeit: ${elapsedText}.${expired ? " Die Runde wurde nach Ablauf der 10 Minuten automatisch abgegeben." : " Deine Antworten und Erklärungen erscheinen erst jetzt."}` :
-          `${score} von ${round.length} Fragen richtig. Bearbeitungszeit: ${elapsedText}. ${score === round.length ? "Stark — das sitzt." : "Eine gute Grundlage für die nächste Runde."} Dein Ergebnis bleibt nur hier auf der Seite.`;
+        copy.textContent = mode === "exam" ? `${locale === "de" ? `${score} von ${round.length} Antworten richtig` : `${score} ${t("labels").rightAnswers} ${round.length}`}. ${t("labels").timeTaken}: ${elapsedText}.${expired ? t("labels").automatic : t("labels").answersNow}` :
+          `${locale === "de" ? `${score} von ${round.length} Fragen richtig` : `${score} ${t("labels").rightQuestions} ${round.length}`}. ${t("labels").timeTaken}: ${elapsedText}. ${score === round.length ? t("labels").strong : t("labels").foundation} ${t("labels").localResult}`;
         results.replaceChildren(kicker, title, scoreEl, copy);
         if (mode === "exam") {
           const list = document.createElement("ol");
           list.className = "review-list";
-          list.setAttribute("aria-label", "Ergebnis und Lösungen");
+          list.setAttribute("aria-label", t("labels").review);
           examRecords.forEach((record, i) => {
             const item = document.createElement("li");
             item.className = `review-item${record.correct ? " correct" : ""}`;
             const strong = document.createElement("strong");
-            strong.textContent = `${String(i + 1).padStart(2, "0")} · ${record.correct ? "Richtig" : "Nicht richtig"} — ${record.question.category}`;
+            const reviewQuestion = translatedQuestion(record.question);
+            const reviewCategory = categoryNames[locale][categories.indexOf(record.question.category)];
+            strong.textContent = `${String(i + 1).padStart(2, "0")} · ${record.correct ? t("labels").right : t("labels").wrong} — ${reviewCategory}`;
             const explanation = document.createElement("span");
-            explanation.textContent = record.question.explain;
+            explanation.textContent = reviewQuestion.explain;
             item.append(strong, explanation);
             list.append(item);
           });
@@ -705,7 +1070,7 @@
         const retry = document.createElement("button");
         retry.className = "button start-button";
         retry.type = "button";
-        retry.textContent = "Neue Runde konfigurieren ↻";
+        retry.textContent = t("labels").retry;
         retry.addEventListener("click", backToSetup);
         results.append(retry);
         results.focus();
@@ -731,10 +1096,14 @@
       document.getElementById("confirm-finish").addEventListener("click", () => finishRound(false));
       document.getElementById("cancel-finish").addEventListener("click", () => { confirmEnd.hidden = true; endButton.focus(); });
       document.querySelectorAll('input[name="mode"]').forEach(input => input.addEventListener("change", () => {
-        document.getElementById("setup-note").textContent = input.value === "exam" ?
-          "10 Fragen · 10 Minuten · nicht pausierbar. Bei weniger als 10 passenden Fragen werden Fragen wiederholt." :
-          "Antworten werden nur in dieser Runde ausgewertet und nicht gespeichert.";
+        document.getElementById("setup-note").textContent = input.value === "exam" ? t("examSetup") : t("privacy");
       }));
+      document.getElementById("language-select").addEventListener("change", event => applyLocale(event.target.value));
+      try {
+        const savedLocale = localStorage.getItem("bitfurbit-language");
+        if (savedLocale) locale = ["de", "fr", "ar"].includes(savedLocale) ? savedLocale : "de";
+      } catch {}
+      applyLocale(locale, false);
       validateQuestionBank();
     })();
   </script>
